@@ -1,30 +1,9 @@
-import { StyleSheet } from 'react-native'
-
-import EditScreenInfo from '@/components/EditScreenInfo'
-import { Text, View } from '@/components/Themed'
+import { Text, View } from 'react-native'
 
 export default function TabOneScreen() {
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>PEC1</Text>
+		<View className='flex-1 items-center justify-center bg-slate-100'>
+			<Text className='text-8xl font-bold text-blue-600'>PEC1</Text>
 		</View>
 	)
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	title: {
-		fontSize: 50,
-		fontWeight: 'bold',
-    color: '#6a00ff'
-	},
-	separator: {
-		marginVertical: 30,
-		height: 1,
-		width: '80%'
-	}
-})
