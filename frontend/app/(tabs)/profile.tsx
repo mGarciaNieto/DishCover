@@ -1,0 +1,106 @@
+/**
+ * Pantalla de perfil de usuario.
+ * Muestra la información básica de la cuenta y acciones de configuración.
+ *
+ * @returns {JSX.Element} Vista de perfil y opciones de usuario.
+ * @author Manuel García Nieto
+ */
+import { Image, Pressable, Text, View } from 'react-native'
+import { router } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
+import { LinearGradient } from 'expo-linear-gradient'
+import { AppScreen } from '@/components/AppScreen'
+import { useAuth } from '@/context/AuthContext'
+import { colors, shadows } from '@/constants/theme'
+
+export default function ProfileScreen() {
+  const { user, logout } = useAuth()
+
+  const handleLogout = () => {
+    // Al cerrar sesión se limpia el contexto y se vuelve al flujo de autenticación.
+    logout()
+    router.replace('/(auth)/login')
+  }
+
+  // La acción principal del perfil usa el mismo degradado que los botones destacados de la app.
+  return (
+    <AppScreen background={colors.surfaceWarm}>
+      <View className="items-center pt-5">
+        <Image
+          source={{ uri: 'https://thispersondoesnotexist.com/' }}
+          className="mb-7 h-34 w-34 rounded-full border-4 border-dish-surface"
+        />
+        <Text className="text-center text-3xl font-black text-dish-text">
+          {`${user.firstName} ${user.lastName}`.trim() || user.username}
+        </Text>
+        <Text className="mt-2 text-lg font-bold text-dish-muted">{user.email}</Text>
+      </View>
+
+      <View className="mt-10 flex-row gap-5">
+        <View className="min-h-24 flex-1 items-center justify-center rounded-3xl bg-dish-muted-surface">
+          <Text className="text-2xl font-black text-dish-green">24</Text>
+          <Text className="text-dish-muted text-sm font-extrabold uppercase">Recetas</Text>
+        </View>
+        <View className="min-h-24 flex-1 items-center justify-center rounded-3xl bg-dish-muted-surface">
+          <Text className="text-2xl font-black text-dish-amber">152</Text>
+          <Text className="text-dish-muted text-sm font-extrabold uppercase">Favoritos</Text>
+        </View>
+      </View>
+
+      <View className="mt-11 gap-4">
+        <Pressable
+          className="min-h-16 overflow-hidden rounded-4xl"
+          style={({ pressed }) => [shadows.soft, pressed && { opacity: 0.82 }]}
+        >
+          <LinearGradient
+            colors={[colors.green, colors.greenLight]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{ alignItems: 'center', flex: 1, flexDirection: 'row', gap: 16, paddingHorizontal: 28 }}
+          >
+            <Ionicons name="pencil" size={24} color="#FFFFFF" />
+            <Text className="flex-1 text-xl font-extrabold text-white">Editar perfil</Text>
+            <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
+          </LinearGradient>
+        </Pressable>
+
+        <Pressable
+          className="min-h-16 flex-row items-center gap-4 rounded-4xl bg-dish-muted-surface px-7"
+          style={({ pressed }) => [pressed && { opacity: 0.82 }]}
+        >
+          <Ionicons name="refresh-circle-outline" size={27} color={colors.text} />
+          <Text className="flex-1 text-lg font-extrabold text-dish-text">Restablecer contraseña</Text>
+          <Ionicons name="chevron-forward" size={24} color={colors.text} />
+        </Pressable>
+
+        <Pressable
+          className="min-h-16 flex-row items-center gap-4 rounded-4xl bg-dish-muted-surface px-7"
+          style={({ pressed }) => [pressed && { opacity: 0.82 }]}
+        >
+          <Ionicons name="settings-outline" size={26} color={colors.text} />
+          <Text className="flex-1 text-lg font-extrabold text-dish-text">Settings</Text>
+          <Ionicons name="chevron-forward" size={24} color={colors.text} />
+        </Pressable>
+
+        <View className="my-1 h-px bg-dish-border" />
+
+        <Pressable
+          className="min-h-16 flex-row items-center gap-4 rounded-4xl bg-dish-surface px-7"
+          style={({ pressed }) => [pressed && { opacity: 0.82 }]}
+          onPress={handleLogout}
+        >
+          <Ionicons name="log-out-outline" size={27} color={colors.text} />
+          <Text className="flex-1 text-lg font-extrabold text-dish-text">Cerrar sesión</Text>
+        </Pressable>
+
+        <Pressable
+          className="min-h-16 flex-row items-center gap-4 px-9"
+          style={({ pressed }) => [pressed && { opacity: 0.82 }]}
+        >
+          <Ionicons name="trash-outline" size={24} color={colors.danger} />
+          <Text className="text-lg font-extrabold text-dish-danger">Eliminar perfil</Text>
+        </Pressable>
+      </View>
+    </AppScreen>
+  )
+}

@@ -1,0 +1,134 @@
+[
+  {
+    "title": "Revuelto de tofu",
+    "description": "Una opción vegana para desayunar con tofu especiado, verduras salteadas y un toque de cúrcuma.",
+    "imageUrl": "https://images.pexels.com/photos/1211887/pexels-photo-1211887.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 20,
+    "numPersons": 1,
+    "ingredients": "200 g de tofu firme, 1/2 pimiento, 1/4 de cebolla, 1/2 cucharadita de cúrcuma, sal y pimienta",
+    "recipeCategory": {
+      "id": 1,
+      "category": "Vegano"
+    }
+  },
+  {
+    "title": "Salteado de verduras",
+    "description": "Un plato vegetariano rápido y colorido con verduras crujientes y salsa de soja.",
+    "imageUrl": "https://media.istockphoto.com/id/467332825/es/foto/friendo-verduras-en-pan-con-una-esp%C3%A1tula.jpg?s=612x612&w=0&k=20&c=7qZ4YkLJG5o5uVcypdrKfopBawJFlecTs1r_xmnrLbs=",
+    "cookingTime": 15,
+    "numPersons": 2,
+    "ingredients": "1 taza de brócoli, 1 pimiento, 1 zanahoria, 1/2 taza de guisantes, 2 dientes de ajo, 2 cucharadas de salsa de soja",
+    "recipeCategory": {
+      "id": 2,
+      "category": "Vegetariano"
+    }
+  },
+  {
+    "title": "Filete a la parrilla",
+    "description": "Un clásico de carne con filete tierno, hierbas aromáticas y especias.",
+    "imageUrl": "https://images.pexels.com/photos/1251208/pexels-photo-1251208.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 30,
+    "numPersons": 1,
+    "ingredients": "200 g de filete, 1 cucharada de aceite de oliva, sal, pimienta negra y romero",
+    "recipeCategory": {
+      "id": 3,
+      "category": "Carne"
+    }
+  },
+  {
+    "title": "Salmón a la plancha",
+    "description": "Filetes de salmón con piel crujiente, limón y hierbas frescas.",
+    "imageUrl": "https://images.pexels.com/photos/6984182/pexels-photo-6984182.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 25,
+    "numPersons": 1,
+    "ingredients": "2 filetes de salmón, 1 limón, 2 cucharadas de aceite de oliva, sal, pimienta y eneldo",
+    "recipeCategory": {
+      "id": 4,
+      "category": "Pescado"
+    }
+  },
+  {
+    "title": "Espaguetis aglio e olio",
+    "description": "Una receta de pasta sencilla con ajo, aceite de oliva, perejil y un punto picante.",
+    "imageUrl": "https://images.pexels.com/photos/11654236/pexels-photo-11654236.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 12,
+    "numPersons": 2,
+    "ingredients": "200 g de espaguetis, 3 dientes de ajo, aceite de oliva, guindilla y perejil",
+    "recipeCategory": {
+      "id": 5,
+      "category": "Pasta"
+    }
+  },
+  {
+    "title": "Pizza margarita",
+    "description": "Pizza italiana con tomate, mozzarella y albahaca fresca.",
+    "imageUrl": "https://images.pexels.com/photos/6605218/pexels-photo-6605218.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 15,
+    "numPersons": 1,
+    "ingredients": "1 base de pizza, salsa de tomate, mozzarella, albahaca fresca y aceite de oliva",
+    "recipeCategory": {
+      "id": 6,
+      "category": "Pizza"
+    }
+  },
+  {
+    "title": "Ensalada griega",
+    "description": "Ensalada fresca con tomate, pepino, aceitunas, lechuga y queso feta.",
+    "imageUrl": "https://images.pexels.com/photos/1211887/pexels-photo-1211887.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 10,
+    "numPersons": 1,
+    "ingredients": "Lechuga, tomate, pepino, aceitunas, queso feta, aceite de oliva y limón",
+    "recipeCategory": {
+      "id": 7,
+      "category": "Ensalada"
+    }
+  },
+  {
+    "title": "Brownies de chocolate",
+    "description": "Postre intenso de chocolate con textura jugosa y cobertura suave.",
+    "imageUrl": "https://images.pexels.com/photos/18523013/pexels-photo-18523013/free-photo-of-gerds-xocolata-bombon-dulce.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 40,
+    "numPersons": 6,
+    "ingredients": "Mantequilla, chocolate negro, azúcar, huevos, vainilla y harina",
+    "recipeCategory": {
+      "id": 8,
+      "category": "Postre"
+    }
+  },
+  {
+    "title": "Mojito clásico",
+    "description": "Bebida refrescante con lima, menta, hielo y agua con gas.",
+    "imageUrl": "https://images.pexels.com/photos/4021983/pexels-photo-4021983.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 5,
+    "numPersons": 1,
+    "ingredients": "Lima, hojas de menta, azúcar, hielo, agua con gas y ron opcional",
+    "recipeCategory": {
+      "id": 9,
+      "category": "Bebidas"
+    }
+  },
+  {
+    "title": "Tostada de aguacate",
+    "description": "Desayuno sencillo con aguacate cremoso sobre pan integral tostado.",
+    "imageUrl": "https://images.pexels.com/photos/1351238/pexels-photo-1351238.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 10,
+    "numPersons": 1,
+    "ingredients": "1 aguacate maduro, 2 rebanadas de pan integral, sal, pimienta y limón",
+    "recipeCategory": {
+      "id": 10,
+      "category": "Desayuno"
+    }
+  },
+  {
+    "title": "Sopa de tomate y albahaca",
+    "description": "Sopa reconfortante de tomate maduro, albahaca fresca y caldo de verduras.",
+    "imageUrl": "https://images.pexels.com/photos/1618943/pexels-photo-1618943.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "cookingTime": 25,
+    "numPersons": 2,
+    "ingredients": "Tomates maduros, cebolla, ajo, caldo de verduras, albahaca fresca y nata opcional",
+    "recipeCategory": {
+      "id": 11,
+      "category": "Sopa"
+    }
+  }
+]
