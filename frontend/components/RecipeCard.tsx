@@ -10,22 +10,28 @@ import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { Recipe } from '@/data/demo'
 import { colors } from '@/constants/theme'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 type RecipeCardProps = {
   recipe: Recipe
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
+  const { isSmallPhone } = useResponsiveLayout()
+  const imageHeight = isSmallPhone ? 188 : 208
+
   return (
     <Pressable className="mb-8" onPress={() => router.push({ pathname: '/recipe/[id]', params: { id: recipe.id.toString() } })} style={({ pressed }) => [pressed && { opacity: 0.82 }]}>
-      <View className="mb-5 h-52 overflow-hidden rounded-3xl bg-dish-muted-surface">
+      <View className="mb-5 overflow-hidden rounded-3xl bg-dish-muted-surface" style={{ height: imageHeight, width: '100%' }}>
         <Image source={recipe.image} className="h-full w-full" resizeMode="cover" />
         <View className="absolute left-4 top-3 rounded-2xl bg-dish-green-light px-4 py-2">
           <Text className="text-xs font-extrabold uppercase text-dish-green-dark">{recipe.category}</Text>
         </View>
       </View>
 
-      <Text className="mb-2.5 text-3xl font-black leading-9 text-dish-text">{recipe.title}</Text>
+      <Text className={`${isSmallPhone ? 'text-2xl' : 'text-3xl'} mb-2.5 font-black text-dish-text`} style={{ lineHeight: isSmallPhone ? 30 : 36 }}>
+        {recipe.title}
+      </Text>
       <Text className="text-lg leading-7 text-dish-muted" numberOfLines={2}>
         {recipe.description}
       </Text>

@@ -25,8 +25,10 @@ import {
   saveFavoriteRecipe,
   updateRecipeComment,
 } from '@/services/api'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 export default function RecipeDetailsScreen() {
+  const { contentWidthStyle, isShortPhone, isSmallPhone, isTablet, screenPaddingStyle } = useResponsiveLayout()
   const { id } = useLocalSearchParams<{ id: string }>()
   const recipeId = useMemo(() => Number(Array.isArray(id) ? id[0] : id), [id])
   const fallbackRecipe = useMemo(() => recipes.find((recipe) => recipe.id === recipeId) ?? null, [recipeId])
@@ -247,7 +249,7 @@ export default function RecipeDetailsScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerClassName="pb-32">
-        <View className="px-6 pt-4">
+        <View style={[screenPaddingStyle, contentWidthStyle, { paddingTop: isShortPhone ? 12 : 16 }]}>
           <View className="mb-5 flex-row items-center justify-between">
             <Pressable className="h-12 w-12 items-center justify-center rounded-3xl bg-dish-surface" onPress={() => router.back()} style={shadows.soft}>
               <Ionicons name="chevron-back" size={25} color={colors.text} />
@@ -264,13 +266,18 @@ export default function RecipeDetailsScreen() {
             </View>
           </View>
 
-          <View className="h-72 overflow-hidden rounded-3xl bg-dish-muted-surface">
+          <View
+            className="overflow-hidden rounded-3xl bg-dish-muted-surface"
+            style={{ height: isTablet ? 330 : isShortPhone ? 224 : 288, width: '100%' }}
+          >
             <Image source={recipe.image} className="h-full w-full" resizeMode="cover" />
           </View>
 
           <View className="mt-6 flex-row items-start justify-between gap-4">
             <View className="flex-1">
-              <Text className="text-4xl font-black leading-10 text-dish-text">{recipe.title}</Text>
+              <Text className={`${isSmallPhone ? 'text-3xl' : 'text-4xl'} font-black text-dish-text`} style={{ lineHeight: isSmallPhone ? 34 : 40 }}>
+                {recipe.title}
+              </Text>
               <Text className="mt-3 self-start rounded-3xl bg-dish-green-light px-4 py-2 text-xs font-extrabold uppercase text-dish-green-dark">{recipe.category}</Text>
             </View>
           </View>
@@ -278,11 +285,11 @@ export default function RecipeDetailsScreen() {
           <View className="mt-6 flex-row gap-3">
             <View className="min-h-16 flex-1 flex-row items-center justify-center gap-2 rounded-3xl bg-dish-surface">
               <Ionicons name="time-outline" size={20} color={colors.green} />
-              <Text className="text-base font-extrabold text-dish-muted">{recipe.cookingTime} min</Text>
+              <Text adjustsFontSizeToFit numberOfLines={1} className="text-base font-extrabold text-dish-muted">{recipe.cookingTime} min</Text>
             </View>
             <View className="min-h-16 flex-1 flex-row items-center justify-center gap-2 rounded-3xl bg-dish-surface">
               <Ionicons name="people-outline" size={20} color={colors.green} />
-              <Text className="text-base font-extrabold text-dish-muted">{recipe.servings} ración</Text>
+              <Text adjustsFontSizeToFit numberOfLines={1} className="text-base font-extrabold text-dish-muted">{recipe.servings} ración</Text>
             </View>
           </View>
 

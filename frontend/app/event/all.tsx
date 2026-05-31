@@ -14,18 +14,22 @@ import { colors, shadows } from '@/constants/theme'
 import { Event, events as demoEvents } from '@/data/demo'
 import { useAuth } from '@/context/AuthContext'
 import { fetchEvents } from '@/services/api'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 const screenBackground = colors.surfaceWarm
 
 function EventCard({ event }: { event: Event }) {
+  const { isSmallPhone } = useResponsiveLayout()
+
   // Imagen superior de la tarjeta para mantener continuidad visual con el mockup de eventos.
   return (
     <View className="overflow-hidden rounded-4xl bg-white" style={shadows.soft}>
       <ImageBackground
         source={event.image}
         resizeMode="cover"
-        className="h-44 justify-end p-5"
+        className="justify-end p-5"
         imageStyle={{ borderTopLeftRadius: 32, borderTopRightRadius: 32 }}
+        style={{ height: isSmallPhone ? 152 : 176 }}
       >
         <View className="absolute inset-0 bg-black/30" />
         <View className="self-start rounded-3xl bg-dish-green-light px-4 py-2">
@@ -34,7 +38,7 @@ function EventCard({ event }: { event: Event }) {
       </ImageBackground>
 
       <View className="gap-4 p-5">
-        <Text className="font-poppins-bold text-2xl text-dish-text">{event.title}</Text>
+        <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} font-poppins-bold text-dish-text`}>{event.title}</Text>
         <Text className="font-poppins-medium text-base leading-6 text-dish-muted">{event.description}</Text>
 
         <View className="flex-row flex-wrap gap-3">
@@ -53,6 +57,7 @@ function EventCard({ event }: { event: Event }) {
 }
 
 export default function AllEventsScreen() {
+  const { contentWidthStyle, horizontalPadding, isSmallPhone, screenPaddingStyle } = useResponsiveLayout()
   const { token } = useAuth()
   const [remoteEvents, setRemoteEvents] = useState<Event[] | null>(null)
   const [loading, setLoading] = useState(false)
@@ -106,13 +111,13 @@ export default function AllEventsScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: screenBackground }}>
-      <View className="px-7 pt-6" style={{ backgroundColor: screenBackground }}>
+      <View style={[screenPaddingStyle, contentWidthStyle, { backgroundColor: screenBackground, paddingTop: 24 }]}>
         <View className="flex-row items-center gap-4">
           <Pressable accessibilityLabel="Volver" className="h-11 w-11 items-center justify-center rounded-3xl" onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={27} color={colors.greenDark} />
           </Pressable>
-          <View>
-            <Text className="font-poppins-bold text-3xl text-dish-green-dark">Todos los eventos</Text>
+          <View className="flex-1">
+            <Text className={`${isSmallPhone ? 'text-2xl' : 'text-3xl'} font-poppins-bold text-dish-green-dark`}>Todos los eventos</Text>
             <Text className="font-poppins-medium mt-1 text-base text-dish-muted">Descubre actividades culinarias disponibles.</Text>
           </View>
         </View>
@@ -141,7 +146,10 @@ export default function AllEventsScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <EventCard event={item} />}
         ItemSeparatorComponent={() => <View className="h-5" />}
-        contentContainerStyle={{ paddingBottom: 130, paddingHorizontal: 28, paddingTop: 26 }}
+        contentContainerStyle={[
+          contentWidthStyle,
+          { paddingBottom: 130, paddingHorizontal: horizontalPadding, paddingTop: 26 },
+        ]}
         ListEmptyComponent={
           <Text className="rounded-4xl bg-white p-5 text-center font-poppins-bold text-dish-muted">No se han encontrado eventos.</Text>
         }

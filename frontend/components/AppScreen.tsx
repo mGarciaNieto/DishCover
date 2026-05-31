@@ -9,6 +9,7 @@ import { PropsWithChildren } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors } from '@/constants/theme'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 type AppScreenProps = PropsWithChildren<{
   title?: string
@@ -17,8 +18,10 @@ type AppScreenProps = PropsWithChildren<{
 }>
 
 export function AppScreen({ title, scroll = true, background = colors.background, children }: AppScreenProps) {
+  const { contentWidthStyle, screenPaddingStyle } = useResponsiveLayout()
+
   const content = (
-    <View className="px-7 pt-8" style={scroll ? undefined : { flex: 1 }}>
+    <View style={[screenPaddingStyle, contentWidthStyle, { paddingTop: 32 }, scroll ? undefined : { flex: 1 }]}>
       {title ? <Text className="mb-5 font-black text-3xl text-dish-green-dark">{title}</Text> : null}
       {children}
     </View>

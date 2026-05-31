@@ -11,13 +11,18 @@ import { Ionicons } from '@expo/vector-icons'
 import { shadows } from '@/constants/theme'
 import { LinearGradient } from 'expo-linear-gradient'
 import { StatusBar } from 'expo-status-bar'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 export default function OnboardingScreen() {
+  const { height, isShortPhone, isSmallPhone, screenPaddingStyle } = useResponsiveLayout()
+  const heroHeight = Math.max(height * (isShortPhone ? 0.52 : 0.58), 330)
+  const titleSize = isSmallPhone ? 46 : 54
+
   return (
     <View className="flex-1 bg-[#DFE0D7]">
       <StatusBar style="light" />
 
-      <View className="relative h-[60%] w-full items-center justify-start bg-[#F4F7ED] pt-16">
+      <View className="relative w-full items-center justify-start bg-[#F4F7ED]" style={{ height: heroHeight, paddingTop: isShortPhone ? 46 : 64 }}>
         <Image
           source={{
             uri: 'https://images.pexels.com/photos/37336823/pexels-photo-37336823.jpeg',
@@ -26,7 +31,7 @@ export default function OnboardingScreen() {
           className="absolute inset-0 h-full w-full"
         />
 
-        <Text className="text-dish-green-light font-poppins z-10 text-[54px]">DishCover</Text>
+        <Text className="text-dish-green-light font-poppins z-10" style={{ fontSize: titleSize }}>DishCover</Text>
 
         <LinearGradient
           colors={['#DCDED500', '#DFE0D7']}
@@ -42,9 +47,13 @@ export default function OnboardingScreen() {
           }}
         />
       </View>
-      <View className="z-10 -mt-5 flex-1 items-center justify-start gap-6 bg-[#DFE0D7] px-7 pb-11">
+      <View
+        className="z-10 -mt-5 flex-1 items-center justify-start bg-[#DFE0D7] pb-11"
+        style={[screenPaddingStyle, { gap: isShortPhone ? 16 : 24 }]}
+      >
         <Text
-          className="text-dish-text font-poppins-bold text-center text-5xl leading-11.5"
+          className={`text-dish-text font-poppins-bold text-center ${isSmallPhone ? 'text-4xl' : 'text-5xl'}`}
+          style={{ lineHeight: isSmallPhone ? 40 : 46 }}
           numberOfLines={2}
           adjustsFontSizeToFit
         >
@@ -52,12 +61,16 @@ export default function OnboardingScreen() {
           <Text className="text-dish-green-dark font-poppins-medium">DishCover!</Text>
         </Text>
 
-        <Text className="text-dish-muted font-poppins text-center text-xl leading-7.5">
+        <Text className={`${isSmallPhone ? 'text-lg' : 'text-xl'} text-dish-muted font-poppins text-center`} style={{ lineHeight: isSmallPhone ? 25 : 30 }}>
           Descubre, cocina y comparte recetas increíbles con la comunidad.
         </Text>
         <Pressable
-          className="mt-3 min-h-18 w-full overflow-hidden rounded-[36px]"
-          style={({ pressed }) => [shadows.soft, pressed && { opacity: 0.82, transform: [{ scale: 0.99 }] }]}
+          className="w-full overflow-hidden rounded-4xl"
+          style={({ pressed }) => [
+            shadows.soft,
+            { minHeight: isShortPhone ? 62 : 72 },
+            pressed && { opacity: 0.82, transform: [{ scale: 0.99 }] },
+          ]}
           onPress={() => router.push('/(auth)/sign-up')}
         >
           <LinearGradient
@@ -71,13 +84,13 @@ export default function OnboardingScreen() {
             }}
           >
             <View className="flex-row items-center justify-center gap-3.5 py-4">
-              <Text className="font-poppins text-2xl font-extrabold text-white">Empezar</Text>
-              <Ionicons name="arrow-forward" size={28} color="#FFFFFF" />
+              <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} font-poppins font-extrabold text-white`}>Empezar</Text>
+              <Ionicons name="arrow-forward" size={isSmallPhone ? 24 : 28} color="#FFFFFF" />
             </View>
           </LinearGradient>
         </Pressable>
         <Pressable
-          className="mt-2 flex-row flex-wrap items-center justify-center gap-2.5"
+          className="flex-row flex-wrap items-center justify-center gap-2.5"
           onPress={() => router.push('/(auth)/login')}
         >
           <Text className="text-dish-muted text-lg">¿Ya tienes una cuenta?</Text>

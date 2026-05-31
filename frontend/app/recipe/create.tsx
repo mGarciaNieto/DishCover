@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors, shadows } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext'
 import { createRecipe } from '@/services/api'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 const categories = ['Vegano', 'Vegetariano', 'Carne', 'Pescado'] as const
 
@@ -39,6 +40,8 @@ function RecipeField({
   multiline = false,
   keyboardType = 'default',
 }: RecipeFieldProps) {
+  const { isShortPhone } = useResponsiveLayout()
+
   return (
     <View className="gap-3">
       <Text className="font-poppins-bold text-dish-muted text-base">{label}</Text>
@@ -50,8 +53,8 @@ function RecipeField({
         placeholder={placeholder}
         placeholderTextColor="#FFFFF8"
         style={{
-          minHeight: multiline ? 136 : 72,
-          paddingTop: multiline ? 28 : 0,
+          minHeight: multiline ? (isShortPhone ? 116 : 136) : isShortPhone ? 64 : 72,
+          paddingTop: multiline ? (isShortPhone ? 22 : 28) : 0,
           textAlignVertical: multiline ? 'top' : 'center',
         }}
         value={value}
@@ -61,6 +64,7 @@ function RecipeField({
 }
 
 export default function CreateRecipeScreen() {
+  const { contentWidthStyle, horizontalPadding, isShortPhone, isSmallPhone, width } = useResponsiveLayout()
   const { token } = useAuth()
   const ingredientsRef = useRef<TextInput>(null)
   const [title, setTitle] = useState('')
@@ -71,6 +75,7 @@ export default function CreateRecipeScreen() {
   const [servings, setServings] = useState(4)
   const [ingredients, setIngredients] = useState('')
   const [loading, setLoading] = useState(false)
+  const stackCookingTime = width < 380
 
   const handleCreateRecipe = async () => {
     // El backend espera cookingTime como número entero, no como texto.
@@ -124,7 +129,15 @@ export default function CreateRecipeScreen() {
         contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 30, paddingHorizontal: 30, paddingBottom: 54, paddingTop: 34 }}
+        contentContainerStyle={[
+          contentWidthStyle,
+          {
+            gap: isShortPhone ? 22 : 30,
+            paddingBottom: 54,
+            paddingHorizontal: horizontalPadding,
+            paddingTop: isShortPhone ? 24 : 34,
+          },
+        ]}
       >
         <View className="flex-row items-center gap-5">
           <Pressable
@@ -137,14 +150,19 @@ export default function CreateRecipeScreen() {
           <Text className="font-poppins-bold text-dish-green-dark text-xl">Crear receta</Text>
         </View>
 
-        <View className="gap-4 pt-12">
-          <Text className="font-poppins-bold text-dish-green-dark text-5xl leading-14">Nueva receta</Text>
-          <Text className="font-poppins-medium text-dish-muted max-w-80 text-lg leading-7">
+        <View className="gap-4" style={{ paddingTop: isShortPhone ? 20 : 48 }}>
+          <Text
+            className={`${isSmallPhone ? 'text-4xl' : 'text-5xl'} font-poppins-bold text-dish-green-dark`}
+            style={{ lineHeight: isSmallPhone ? 44 : 56 }}
+          >
+            Nueva receta
+          </Text>
+          <Text className="font-poppins-medium text-dish-muted max-w-80 text-lg" style={{ lineHeight: isSmallPhone ? 25 : 28 }}>
             Comparte tu creación culinaria con la comunidad DishCover. Completa los datos para publicar tu plato.
           </Text>
         </View>
 
-        <View className="gap-7">
+        <View style={{ gap: isShortPhone ? 22 : 28 }}>
           <RecipeField label="Título de la receta" placeholder="Título" value={title} onChangeText={setTitle} />
           <RecipeField
             label="Descripción de la receta"
@@ -156,7 +174,7 @@ export default function CreateRecipeScreen() {
 
           <View className="gap-3">
             <Text className="font-poppins-bold text-dish-muted text-base">Imagen de la receta</Text>
-            <View className="bg-dish-green-light h-18 flex-row items-center gap-3 rounded-4xl px-7">
+            <View className="bg-dish-green-light flex-row items-center gap-3 rounded-4xl px-7" style={{ minHeight: isShortPhone ? 64 : 72 }}>
               <Ionicons name="image-outline" size={22} color="rgba(0, 109, 29, 0.64)" />
               <TextInput
                 autoCapitalize="none"
@@ -179,7 +197,8 @@ export default function CreateRecipeScreen() {
                 return (
                   <Pressable
                     key={item}
-                    className={`min-h-14 justify-center rounded-4xl border px-7 ${active ? 'border-dish-green-dark bg-dish-green-dark' : 'border-dish-border bg-transparent'}`}
+                    className={`justify-center rounded-4xl border ${active ? 'border-dish-green-dark bg-dish-green-dark' : 'border-dish-border bg-transparent'}`}
+                    style={{ minHeight: isShortPhone ? 48 : 56, paddingHorizontal: isSmallPhone ? 20 : 28 }}
                     onPress={() => setCategory(item)}
                   >
                     <Text className={`font-poppins-bold text-base ${active ? 'text-white' : 'text-dish-text'}`}>
@@ -193,16 +212,20 @@ export default function CreateRecipeScreen() {
 
           <View className="gap-3">
             <Text className="font-poppins-bold text-dish-muted text-base">Tiempo de cocción</Text>
-            <View className="flex-row gap-5">
+            <View className={`${stackCookingTime ? 'gap-4' : 'flex-row gap-5'}`}>
               <TextInput
-                className="font-poppins-medium bg-dish-green-light text-dish-green-dark h-20 flex-1 rounded-4xl px-7 text-lg"
+                className="font-poppins-medium bg-dish-green-light text-dish-green-dark rounded-4xl px-7 text-lg"
                 keyboardType="numeric"
                 onChangeText={setCookingTime}
                 placeholder="Minutos"
                 placeholderTextColor="#FFFFF8"
+                style={{ minHeight: isShortPhone ? 64 : 80, flex: stackCookingTime ? undefined : 1 }}
                 value={cookingTime}
               />
-              <View className="h-20 flex-1 items-center justify-center rounded-4xl border-2 border-[#FFD891] bg-[#FFEBC8]">
+              <View
+                className="items-center justify-center rounded-4xl border-2 border-[#FFD891] bg-[#FFEBC8]"
+                style={{ minHeight: isShortPhone ? 64 : 80, flex: stackCookingTime ? undefined : 1 }}
+              >
                 <Ionicons name="timer-outline" size={27} color="#9B5B10" />
                 <Text className="font-poppins-bold text-dish-text mt-1 text-xs uppercase">Duración</Text>
               </View>
@@ -211,8 +234,10 @@ export default function CreateRecipeScreen() {
 
           <View className="gap-3">
             <Text className="font-poppins-bold text-dish-muted text-base">Raciones por persona</Text>
-            <View className="bg-dish-green-light items-center rounded-4xl px-7 py-8">
-              <Text className="font-poppins-bold text-7xl leading-18 text-[#063A12]">{servings}</Text>
+            <View className="bg-dish-green-light items-center rounded-4xl px-7" style={{ paddingVertical: isShortPhone ? 22 : 32 }}>
+              <Text className={`${isSmallPhone ? 'text-6xl' : 'text-7xl'} font-poppins-bold text-[#063A12]`} style={{ lineHeight: isSmallPhone ? 60 : 72 }}>
+                {servings}
+              </Text>
               <View className="mt-3 flex-row gap-5">
                 <Pressable
                   className="h-12 w-12 items-center justify-center rounded-3xl bg-[#063A12]"
@@ -235,7 +260,7 @@ export default function CreateRecipeScreen() {
 
           <View className="gap-3">
             <Text className="font-poppins-bold text-dish-muted text-base">Ingredientes necesarios</Text>
-            <View className="bg-dish-green-light min-h-18 flex-row items-center gap-3 rounded-4xl px-7">
+            <View className="bg-dish-green-light flex-row items-center gap-3 rounded-4xl px-7" style={{ minHeight: isShortPhone ? 64 : 72 }}>
               <TextInput
                 ref={ingredientsRef}
                 className="font-poppins-medium text-dish-green-dark flex-1 text-lg"
@@ -257,11 +282,12 @@ export default function CreateRecipeScreen() {
         </View>
 
         <Pressable
-          className="mt-5 min-h-20 overflow-hidden rounded-4xl"
+          className="mt-5 overflow-hidden rounded-4xl"
           disabled={loading}
           onPress={handleCreateRecipe}
           style={({ pressed }) => [
             shadows.soft,
+            { minHeight: isShortPhone ? 68 : 80 },
             loading && { opacity: 0.58 },
             pressed && !loading && { opacity: 0.86 },
           ]}

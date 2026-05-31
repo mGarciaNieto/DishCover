@@ -6,8 +6,9 @@
  * @author Manuel García Nieto
  */
 import { PropsWithChildren } from 'react'
-import { KeyboardAvoidingView, Platform, Text, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 type AuthScreenProps = PropsWithChildren<{
   eyebrow: string
@@ -17,24 +18,39 @@ type AuthScreenProps = PropsWithChildren<{
 
 export function AuthScreen({ eyebrow, title, subtitle, children }: AuthScreenProps) {
   const insets = useSafeAreaInsets()
+  const { contentWidthStyle, isShortPhone, isSmallPhone, screenPaddingStyle } = useResponsiveLayout()
 
   return (
     <View className="bg-dish-surface flex-1">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1">
-        <View
-          className="flex-1 px-8 pb-8"
-          // Ajustamos el margen superior a la zona segura del dispositivo.
-          style={{ paddingTop: insets.top + 20 }}
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          // Ajustamos el margen superior a la zona segura del dispositivo y permitimos scroll en móviles bajos.
+          contentContainerStyle={[
+            screenPaddingStyle,
+            contentWidthStyle,
+            {
+              flexGrow: 1,
+              paddingBottom: 32,
+              paddingTop: insets.top + (isShortPhone ? 12 : 20),
+            },
+          ]}
         >
           <Text className="text-dish-soft text-lg font-bold">{eyebrow}</Text>
 
-          <View className="mb-22 mt-10 gap-4">
-            <Text className="text-4xl font-black leading-12 text-dish-text">{title}</Text>
-            <Text className="text-2xl text-dish-soft">{subtitle}</Text>
+          <View style={{ gap: 16, marginBottom: isShortPhone ? 34 : 88, marginTop: isShortPhone ? 24 : 40 }}>
+            <Text
+              className={`${isSmallPhone ? 'text-3xl' : 'text-4xl'} font-black text-dish-text`}
+              style={{ lineHeight: isSmallPhone ? 38 : 48 }}
+            >
+              {title}
+            </Text>
+            <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} text-dish-soft`}>{subtitle}</Text>
           </View>
 
           {children}
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   )

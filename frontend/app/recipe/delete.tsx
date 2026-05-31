@@ -14,8 +14,10 @@ import { Recipe } from '@/data/demo'
 import { colors, shadows } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext'
 import { deleteRecipe, fetchRecipes } from '@/services/api'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 export default function DeleteRecipeScreen() {
+  const { contentWidthStyle, isShortPhone, screenPaddingStyle } = useResponsiveLayout()
   const { token } = useAuth()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(false)
@@ -74,7 +76,7 @@ export default function DeleteRecipeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <View className="flex-1 px-6 pt-4">
+      <View className="flex-1" style={[screenPaddingStyle, contentWidthStyle, { paddingTop: isShortPhone ? 12 : 16 }]}>
         <View className="mb-6 flex-row items-center gap-4">
           <Pressable className="h-12 w-12 items-center justify-center rounded-3xl bg-dish-surface" onPress={() => router.back()} style={shadows.soft}>
             <Ionicons name="chevron-back" size={25} color={colors.text} />
@@ -103,7 +105,7 @@ export default function DeleteRecipeScreen() {
             ListEmptyComponent={<Text className="rounded-3xl bg-dish-muted-surface p-5 text-base font-bold leading-6 text-dish-muted">No hay recetas disponibles para eliminar.</Text>}
             renderItem={({ item }) => (
               <View className="mb-6 rounded-3xl bg-dish-surface p-4" style={shadows.soft}>
-                <View className="h-44 overflow-hidden rounded-3xl bg-dish-muted-surface">
+                <View className="overflow-hidden rounded-3xl bg-dish-muted-surface" style={{ aspectRatio: 16 / 9, width: '100%' }}>
                   <Image source={item.image} className="h-full w-full" resizeMode="cover" />
                 </View>
 

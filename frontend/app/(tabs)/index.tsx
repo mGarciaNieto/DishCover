@@ -13,8 +13,10 @@ import { RecipeCard } from '@/components/RecipeCard'
 import { Recipe, recipes } from '@/data/demo'
 import { useAuth } from '@/context/AuthContext'
 import { fetchRecipes } from '@/services/api'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 export default function HomeScreen() {
+  const { isSmallPhone } = useResponsiveLayout()
   const { token } = useAuth()
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('')
@@ -52,9 +54,9 @@ export default function HomeScreen() {
   return (
     <AppScreen scroll={false}>
       <View className="gap-6 pb-6">
-        <View className="flex-row items-center gap-4">
+        <View className={`${isSmallPhone ? 'gap-4' : 'flex-row items-center gap-4'}`}>
           <Text className="text-3xl font-black text-dish-green-dark">Recetas</Text>
-          <View className="min-h-14 flex-1 flex-row items-center gap-2 rounded-sm bg-dish-muted-surface px-3.5">
+          <View className={`${isSmallPhone ? 'w-full' : 'flex-1'} min-h-14 flex-row items-center gap-2 rounded-sm bg-dish-muted-surface px-3.5`}>
             <Ionicons name="search" size={24} color="#7B8076" />
             <TextInput
               value={query}
@@ -88,6 +90,7 @@ export default function HomeScreen() {
         keyExtractor={(recipe) => recipe.id.toString()}
         renderItem={({ item }) => <RecipeCard recipe={item} />}
         showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="pb-32"
         ListEmptyComponent={<Text className="text-lg leading-7 text-dish-muted">No hay recetas para esta búsqueda.</Text>}
       />

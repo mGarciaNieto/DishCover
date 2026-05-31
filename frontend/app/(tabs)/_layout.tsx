@@ -10,6 +10,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import type { ReactNode } from 'react'
 import { Text, View } from 'react-native'
 import { colors } from '@/constants/theme'
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 type TabIconContentProps = {
   children: ReactNode
@@ -18,6 +19,10 @@ type TabIconContentProps = {
 }
 
 function TabIconContent({ children, focused, label }: TabIconContentProps) {
+  const { isSmallPhone: compact } = useResponsiveLayout()
+  const focusedWidth = compact ? 70 : 80
+  const idleWidth = compact ? 56 : 64
+
   // La cápsula activa se mantiene compacta para no desbordar en las pestañas laterales.
   return (
     <View
@@ -26,9 +31,9 @@ function TabIconContent({ children, focused, label }: TabIconContentProps) {
         backgroundColor: focused ? colors.greenLight : 'transparent',
         borderRadius: 999,
         gap: 2,
-        height: 50,
+        height: compact ? 46 : 50,
         justifyContent: 'center',
-        width: focused ? 80 : 64,
+        width: focused ? focusedWidth : idleWidth,
       }}
     >
       {children}
@@ -39,12 +44,12 @@ function TabIconContent({ children, focused, label }: TabIconContentProps) {
         style={{
           color: focused ? '#FFFFF8' : '#6C6A64',
           fontFamily: focused ? 'Poppins-Bold' : 'Poppins-Medium',
-          fontSize: focused ? 11 : 11,
+          fontSize: compact ? 10 : 11,
           includeFontPadding: false,
           letterSpacing: 0,
           textAlign: 'center',
           textTransform: 'uppercase',
-          width: focused ? 70 : 60,
+          width: focused ? focusedWidth - 10 : idleWidth - 6,
         }}
       >
         {label}
