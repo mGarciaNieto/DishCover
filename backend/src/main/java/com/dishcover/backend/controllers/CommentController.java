@@ -44,7 +44,7 @@ public class CommentController {
     @Autowired
     private JwtService jwtService;
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PostMapping("/recipe/{id}/comment")
     public ResponseEntity<?> addComment(HttpServletRequest header, @PathVariable Long id, @RequestBody CommentRequest request) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -71,7 +71,7 @@ public class CommentController {
         }
     }
     
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/recipe/{id}/comments")
     public ResponseEntity<?> getComments(@PathVariable Long id) {
         RecipeModel recipe = recipeService.getRecipeById(id);
@@ -84,7 +84,7 @@ public class CommentController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping("/comment/{id}")
     public ResponseEntity<?> editMyComment(HttpServletRequest header, @RequestBody CommentRequest request, @PathVariable Long id) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -102,7 +102,7 @@ public class CommentController {
         return commentService.editMyComment(id, user, request);
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/comment/{id}")
     public ResponseEntity<?> deleteMyComment(HttpServletRequest header, @PathVariable Long id) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -121,7 +121,7 @@ public class CommentController {
         return commentService.deleteMyComment(id, user);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/comment/a/{id}")
     public ResponseEntity<?> deleteCommentById(@PathVariable Long id) {
         return commentService.deleteCommentById(id);

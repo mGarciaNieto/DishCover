@@ -42,7 +42,7 @@ public class RecipeController {
     @Autowired
     private JwtService jwtService;
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PostMapping("/recipe")
     public ResponseEntity<?> createRecipe(@RequestBody RecipeRequest request, HttpServletRequest header) {
         // Evita duplicar recetas por título antes de validar el token.
@@ -73,7 +73,7 @@ public class RecipeController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/recipes")
     public ResponseEntity<?> getMyRecipes(HttpServletRequest header) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -92,14 +92,14 @@ public class RecipeController {
         return ResponseEntity.ok(listRecipes);
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/recipes/all")
     public ResponseEntity<?> getAllRecipes() {
         List<RecipeModel> listRecipes = recipeService.getAllRecipes();
         return ResponseEntity.ok(listRecipes);
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/recipe/{id}")
     public ResponseEntity<?> getRecipeById(@PathVariable("id") Long id) {
         RecipeModel recipe = recipeService.getRecipeById(id);
@@ -110,7 +110,7 @@ public class RecipeController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping("/recipe/{id}")
     public ResponseEntity<?> editMyRecipe(HttpServletRequest header, @RequestBody RecipeRequest request, @PathVariable Long id) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -128,7 +128,7 @@ public class RecipeController {
         return recipeService.editMyRecipe(id, user, request);
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/recipe/{id}")
     public ResponseEntity<?> deleteMyRecipe(HttpServletRequest header, @PathVariable Long id) {
         // Solo se permite borrar una receta si pertenece al usuario autenticado.
@@ -148,7 +148,7 @@ public class RecipeController {
         return recipeService.deleteMyRecipe(id, user);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/recipe/a/{id}")
     public ResponseEntity<?> deleteRecipeById(@PathVariable Long id) {
         return recipeService.deleteRecipeById(id);

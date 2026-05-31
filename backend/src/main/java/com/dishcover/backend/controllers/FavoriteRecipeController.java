@@ -34,7 +34,7 @@ public class FavoriteRecipeController {
     @Autowired
     private JwtService jwtService;
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PostMapping("recipe/{id}/favorite")
     public ResponseEntity<?> saveFavoriteRecipe(HttpServletRequest header, @PathVariable Long id) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -62,7 +62,7 @@ public class FavoriteRecipeController {
 
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("recipes/favorite")
     public ResponseEntity<?> getMyFavoriteRecipes(HttpServletRequest header) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -90,7 +90,7 @@ public class FavoriteRecipeController {
 
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("user/{id}/recipes/favorite")
     public ResponseEntity<?> getFavoriteRecipesByUserId(@PathVariable Long id) {
         Optional<UserModel> userOptional = userRepository.findById(id);
@@ -111,7 +111,7 @@ public class FavoriteRecipeController {
         return response;
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("recipe/{id}/favorite")
     public ResponseEntity<?> deleteFavoriteRecipe(HttpServletRequest header, @PathVariable Long id) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);

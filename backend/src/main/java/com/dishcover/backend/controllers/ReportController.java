@@ -44,7 +44,7 @@ public class ReportController {
     @Autowired
     private JwtService jwtService;
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PostMapping("/recipe/{id}/report")
     public ResponseEntity<?> addReport(HttpServletRequest header, @PathVariable Long id, @RequestBody ReportRequest request) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -71,7 +71,7 @@ public class ReportController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/recipe/{id}/reports")
     public ResponseEntity<?> getReports(@PathVariable Long id) {
         RecipeModel recipe = recipeService.getRecipeById(id);
@@ -84,7 +84,7 @@ public class ReportController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PutMapping("/report/{id}")
     public ResponseEntity<?> editMyReport(HttpServletRequest header, @RequestBody ReportRequest request, @PathVariable Long id) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -102,7 +102,7 @@ public class ReportController {
         return reportService.editMyReport(id, user, request);
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/report/{id}")
     public ResponseEntity<?> deleteMyReport(HttpServletRequest header, @PathVariable Long id) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -121,7 +121,7 @@ public class ReportController {
         return reportService.deleteMyReport(id, user);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/report/a/{id}")
     public ResponseEntity<?> deleteReportById(@PathVariable Long id) {
         return reportService.deleteReportById(id);

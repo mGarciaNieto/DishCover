@@ -1,8 +1,5 @@
 package com.dishcover.backend.controllers;
 
-// Autor: Manuel García Nieto
-// Controlador REST para consultar eventos y gestionar inscripciones de usuarios.
-
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +26,10 @@ import com.dishcover.backend.tools.SpringResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * Controlador REST para consultar eventos y gestionar inscripciones de usuarios.
+ * @ author Manuel García Nieto
+ */
 @RestController
 @RequestMapping("/api")
 public class EventController {
@@ -42,7 +43,7 @@ public class EventController {
     @Autowired
     private IUserRepository userRepository;
     
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/event/create")
     public ResponseEntity<?> createEvent(@RequestBody EventRequest request) {
         if (eventService.eventExists(request)) {
@@ -58,7 +59,7 @@ public class EventController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/event/{id}")
     public ResponseEntity<?> getEventById(@PathVariable Long id) {
         EventModel event = eventService.getEventById(id);
@@ -69,7 +70,7 @@ public class EventController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/event/{id}/attendees")
     public ResponseEntity<?> getAttendeesFromEvent(@PathVariable Long id) {
         EventModel event = eventService.getEventById(id);
@@ -81,7 +82,7 @@ public class EventController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/event/all")
     public ResponseEntity<?> getAllEvents() {
         // Devuelve el catálogo completo de eventos disponible para el frontend.
@@ -94,19 +95,19 @@ public class EventController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/event/{id}")
     public ResponseEntity<?> editEventByid(@PathVariable Long id, @RequestBody EventRequest request) {
         return eventService.editEventById(id, request);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/event/{id}")
     public ResponseEntity<?> deleteEventById(@PathVariable Long id) {
         return eventService.deleteEventById(id);
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PostMapping("/event/{id}/register")
     public ResponseEntity<?> registerUserToEvent(@PathVariable Long id, HttpServletRequest header) {
         // El token identifica el usuario que se va a inscribir al evento.
@@ -134,7 +135,7 @@ public class EventController {
         return response;
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/events/registered")
     public ResponseEntity<?> getEventsRegisteredOfUser(HttpServletRequest header) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);
@@ -161,7 +162,7 @@ public class EventController {
         return response;
     }
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/event/{id}/unregister")
     public ResponseEntity<?> unregisterUserToEvent(@PathVariable Long id, HttpServletRequest header) {
         ValidationResponse validationResponse = jwtService.validateTokenAndUser(header);

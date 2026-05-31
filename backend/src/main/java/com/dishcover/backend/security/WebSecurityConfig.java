@@ -26,7 +26,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests((authz) -> authz
                 .requestMatchers("/health").permitAll()
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/api/**").hasAnyRole("ADMIN", "USER", "GESTOR")
+                .requestMatchers("/api/**").hasAnyRole("ADMIN", "USER")
                 .anyRequest().authenticated()
             ).sessionManagement((sessionManagement) ->
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
