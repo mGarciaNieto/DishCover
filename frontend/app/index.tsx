@@ -86,7 +86,7 @@ export default function OnboardingScreen() {
           style={{
             lineHeight: isSmallPhone ? 25 : 30,
             marginTop: compactHeight ? 18 : 26,
-            marginBottom: compactHeight ? 14 : 20,
+            marginBottom: compactHeight ? 24 : 30,
           }}
         >
           Descubre, cocina y comparte recetas increíbles con la comunidad.
@@ -123,7 +123,7 @@ export default function OnboardingScreen() {
         </Pressable>
         <Pressable
           className="flex-row flex-wrap items-center justify-center gap-2.5"
-          style={{ marginTop: compactHeight ? 14 : 20 }}
+          style={{ marginTop: compactHeight ? 24 : 40 }}
           onPress={() => router.push('/(auth)/login')}
         >
           <Text className={`${isSmallPhone ? 'text-base' : 'text-lg'} text-dish-muted`}>¿Ya tienes una cuenta?</Text>

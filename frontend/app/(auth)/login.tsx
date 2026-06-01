@@ -50,7 +50,7 @@ export default function LoginScreen() {
           <Field value={password} onChangeText={setPassword} placeholder="Introduce tu contraseña" secureTextEntry />
         </FormStack>
 
-        <Pressable className="mt-7 self-end">
+        <Pressable className="mt-7 mb-7 self-end">
           <Text className="text-lg font-extrabold text-dish-muted">¿Has olvidado la contraseña?</Text>
         </Pressable>
 

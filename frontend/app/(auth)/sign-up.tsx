@@ -45,7 +45,7 @@ export default function SignUpScreen() {
   }
 
   return (
-    <AuthScreen eyebrow="Registro" title="Vamos a empezar" subtitle="Completa tus datos para crear una cuenta">
+    <AuthScreen title="Vamos a empezar" subtitle="Completa tus datos para crear una cuenta">
       <FormStack>
         <Field value={username} onChangeText={setUsername} autoCapitalize="none" placeholder="Introduce tu usuario" />
         <Field value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Introduce tu email" />
@@ -54,7 +54,9 @@ export default function SignUpScreen() {
         <Field value={password} onChangeText={setPassword} placeholder="Introduce tu contraseña" secureTextEntry />
       </FormStack>
 
-      <PrimaryButton label={loading ? 'Creando...' : 'Registrarme'} onPress={handleSignUp} disabled={loading} />
+      <View className="mt-12">
+        <PrimaryButton label={loading ? 'Creando...' : 'Registrarme'} onPress={handleSignUp} disabled={loading}/>
+      </View>
 
       <View className="mt-auto flex-row flex-wrap justify-center gap-1.5">
         <Text className="text-lg text-dish-soft">¿Ya tienes cuenta?</Text>
