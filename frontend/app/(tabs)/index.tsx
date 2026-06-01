@@ -14,9 +14,11 @@ import { Recipe, recipes } from '@/data/demo'
 import { useAuth } from '@/context/AuthContext'
 import { fetchRecipes } from '@/services/api'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
+import { useTheme } from '@/context/ThemeContext'
 
 export default function HomeScreen() {
   const { isSmallPhone } = useResponsiveLayout()
+  const { colors, isDarkMode } = useTheme()
   const { token } = useAuth()
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('')
@@ -55,15 +57,19 @@ export default function HomeScreen() {
     <AppScreen scroll={false}>
       <View className="gap-6 pb-6">
         <View className={`${isSmallPhone ? 'gap-4' : 'flex-row items-center gap-4'}`}>
-          <Text className="text-3xl font-black text-dish-green-dark">Recetas</Text>
-          <View className={`${isSmallPhone ? 'w-full' : 'flex-1'} min-h-14 flex-row items-center gap-2 rounded-sm bg-dish-muted-surface px-3.5`}>
-            <Ionicons name="search" size={24} color="#7B8076" />
+          <Text className="text-3xl font-black" style={{ color: isDarkMode ? colors.text : colors.greenDark }}>Recetas</Text>
+          <View
+            className={`${isSmallPhone ? 'w-full' : 'flex-1'} min-h-14 flex-row items-center gap-2 rounded-sm px-3.5`}
+            style={{ backgroundColor: colors.mutedSurface }}
+          >
+            <Ionicons name="search" size={24} color={colors.mutedText} />
             <TextInput
               value={query}
               onChangeText={setQuery}
               placeholder="Buscar recetas..."
-              placeholderTextColor="#7B8076"
-              className="flex-1 text-lg text-dish-text"
+              placeholderTextColor={colors.mutedText}
+              className="flex-1 text-lg"
+              style={{ color: colors.text }}
             />
           </View>
         </View>
@@ -74,10 +80,11 @@ export default function HomeScreen() {
             return (
               <Pressable
                 key={category}
-                className={`min-h-12 items-center justify-center rounded-3xl px-5 ${active ? 'bg-dish-green' : 'bg-dish-muted-surface'}`}
+                className="min-h-12 items-center justify-center rounded-3xl px-5"
+                style={{ backgroundColor: active ? colors.green : colors.mutedSurface }}
                 onPress={() => setActiveCategory(active ? '' : category)}
               >
-                <Text className={`font-extrabold text-base ${active ? 'text-white' : 'text-dish-text'}`}>{category}</Text>
+                <Text className="font-extrabold text-base" style={{ color: active ? '#FFFFFF' : colors.text }}>{category}</Text>
               </Pressable>
             )
           })}
@@ -92,7 +99,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="pb-32"
-        ListEmptyComponent={<Text className="text-lg leading-7 text-dish-muted">No hay recetas para esta búsqueda.</Text>}
+        ListEmptyComponent={<Text className="text-lg leading-7" style={{ color: colors.mutedText }}>No hay recetas para esta búsqueda.</Text>}
       />
     </AppScreen>
   )

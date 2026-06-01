@@ -13,10 +13,15 @@ import { AppScreen } from '@/components/AppScreen'
 import { useAuth } from '@/context/AuthContext'
 import { colors, shadows } from '@/constants/theme'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
+import { useTheme } from '@/context/ThemeContext'
 
 export default function ProfileScreen() {
   const { isShortPhone, isSmallPhone } = useResponsiveLayout()
+  const { colors: themeColors, isDarkMode } = useTheme()
   const { user, logout } = useAuth()
+  const profileActionColor = isDarkMode ? colors.text : themeColors.text
+  const profileMutedButtonBackground = isDarkMode ? colors.mutedSurface : themeColors.mutedSurface
+  const profileSurfaceButtonBackground = isDarkMode ? colors.surface : themeColors.surface
 
   const handleLogout = () => {
     // Al cerrar sesión se limpia el contexto y se vuelve al flujo de autenticación.
@@ -26,27 +31,27 @@ export default function ProfileScreen() {
 
   // La acción principal del perfil usa el mismo degradado que los botones destacados de la app.
   return (
-    <AppScreen background={colors.surfaceWarm}>
+    <AppScreen background={themeColors.surfaceWarm}>
       <View className="items-center" style={{ paddingTop: isShortPhone ? 8 : 20 }}>
         <Image
           source={{ uri: 'https://thispersondoesnotexist.com/' }}
           className="mb-7 rounded-full border-4 border-dish-surface"
-          style={{ height: isSmallPhone ? 116 : 136, width: isSmallPhone ? 116 : 136 }}
+          style={{ borderColor: themeColors.surface, height: isSmallPhone ? 116 : 136, width: isSmallPhone ? 116 : 136 }}
         />
-        <Text className={`${isSmallPhone ? 'text-2xl' : 'text-3xl'} text-center font-black text-dish-text`}>
+        <Text className={`${isSmallPhone ? 'text-2xl' : 'text-3xl'} text-center font-black`} style={{ color: themeColors.text }}>
           {`${user.firstName} ${user.lastName}`.trim() || user.username}
         </Text>
-        <Text className="mt-2 text-lg font-bold text-dish-muted">{user.email}</Text>
+        <Text className="mt-2 text-lg font-bold" style={{ color: themeColors.mutedText }}>{user.email}</Text>
       </View>
 
       <View className="flex-row" style={{ gap: isSmallPhone ? 12 : 20, marginTop: isShortPhone ? 28 : 40 }}>
-        <View className="min-h-24 flex-1 items-center justify-center rounded-3xl bg-dish-muted-surface">
+        <View className="min-h-24 flex-1 items-center justify-center rounded-3xl" style={{ backgroundColor: themeColors.mutedSurface }}>
           <Text className="text-2xl font-black text-dish-green">24</Text>
-          <Text adjustsFontSizeToFit numberOfLines={1} className="text-dish-muted text-sm font-extrabold uppercase">Recetas</Text>
+          <Text adjustsFontSizeToFit numberOfLines={1} className="text-sm font-extrabold uppercase" style={{ color: themeColors.mutedText }}>Recetas</Text>
         </View>
-        <View className="min-h-24 flex-1 items-center justify-center rounded-3xl bg-dish-muted-surface">
+        <View className="min-h-24 flex-1 items-center justify-center rounded-3xl" style={{ backgroundColor: themeColors.mutedSurface }}>
           <Text className="text-2xl font-black text-dish-amber">152</Text>
-          <Text adjustsFontSizeToFit numberOfLines={1} className="text-dish-muted text-sm font-extrabold uppercase">Favoritos</Text>
+          <Text adjustsFontSizeToFit numberOfLines={1} className="text-sm font-extrabold uppercase" style={{ color: themeColors.mutedText }}>Favoritos</Text>
         </View>
       </View>
 
@@ -69,31 +74,32 @@ export default function ProfileScreen() {
 
         <Pressable
           className="min-h-16 flex-row items-center gap-4 rounded-4xl bg-dish-muted-surface px-7"
-          style={({ pressed }) => [pressed && { opacity: 0.82 }]}
+          style={({ pressed }) => [{ backgroundColor: profileMutedButtonBackground }, pressed && { opacity: 0.82 }]}
         >
-          <Ionicons name="refresh-circle-outline" size={27} color={colors.text} />
-          <Text className="flex-1 text-lg font-extrabold text-dish-text">Restablecer contraseña</Text>
-          <Ionicons name="chevron-forward" size={24} color={colors.text} />
+          <Ionicons name="refresh-circle-outline" size={27} color={profileActionColor} />
+          <Text className="flex-1 text-lg font-extrabold" style={{ color: profileActionColor }}>Restablecer contraseña</Text>
+          <Ionicons name="chevron-forward" size={24} color={profileActionColor} />
         </Pressable>
 
         <Pressable
           className="min-h-16 flex-row items-center gap-4 rounded-4xl bg-dish-muted-surface px-7"
-          style={({ pressed }) => [pressed && { opacity: 0.82 }]}
+          style={({ pressed }) => [{ backgroundColor: profileMutedButtonBackground }, pressed && { opacity: 0.82 }]}
+          onPress={() => router.push('/settings')}
         >
-          <Ionicons name="settings-outline" size={26} color={colors.text} />
-          <Text className="flex-1 text-lg font-extrabold text-dish-text">Settings</Text>
-          <Ionicons name="chevron-forward" size={24} color={colors.text} />
+          <Ionicons name="settings-outline" size={26} color={profileActionColor} />
+          <Text className="flex-1 text-lg font-extrabold" style={{ color: profileActionColor }}>Settings</Text>
+          <Ionicons name="chevron-forward" size={24} color={profileActionColor} />
         </Pressable>
 
-        <View className="my-1 h-px bg-dish-border" />
+        <View className="my-1 h-px" style={{ backgroundColor: themeColors.border }} />
 
         <Pressable
           className="min-h-16 flex-row items-center gap-4 rounded-4xl bg-dish-surface px-7"
-          style={({ pressed }) => [pressed && { opacity: 0.82 }]}
+          style={({ pressed }) => [{ backgroundColor: profileSurfaceButtonBackground }, pressed && { opacity: 0.82 }]}
           onPress={handleLogout}
         >
-          <Ionicons name="log-out-outline" size={27} color={colors.text} />
-          <Text className="flex-1 text-lg font-extrabold text-dish-text">Cerrar sesión</Text>
+          <Ionicons name="log-out-outline" size={27} color={profileActionColor} />
+          <Text className="flex-1 text-lg font-extrabold" style={{ color: profileActionColor }}>Cerrar sesión</Text>
         </Pressable>
 
         <Pressable

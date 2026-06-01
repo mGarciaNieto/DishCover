@@ -9,8 +9,8 @@ import { Tabs } from 'expo-router'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import type { ReactNode } from 'react'
 import { Text, View } from 'react-native'
-import { colors } from '@/constants/theme'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
+import { useTheme } from '@/context/ThemeContext'
 
 type TabIconContentProps = {
   children: ReactNode
@@ -20,6 +20,7 @@ type TabIconContentProps = {
 
 function TabIconContent({ children, focused, label }: TabIconContentProps) {
   const { isSmallPhone: compact } = useResponsiveLayout()
+  const { colors } = useTheme()
   const focusedWidth = compact ? 52 : 58
   const idleWidth = compact ? 44 : 48
 
@@ -42,7 +43,7 @@ function TabIconContent({ children, focused, label }: TabIconContentProps) {
         minimumFontScale={0.72}
         numberOfLines={1}
         style={{
-          color: focused ? '#FFFFF8' : '#6C6A64',
+          color: focused ? '#FFFFF8' : colors.mutedText,
           fontFamily: focused ? 'Poppins-Bold' : 'Poppins-Medium',
           fontSize: 9,
           includeFontPadding: false,
@@ -59,13 +60,15 @@ function TabIconContent({ children, focused, label }: TabIconContentProps) {
 }
 
 export default function TabsLayout() {
+  const { colors } = useTheme()
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.greenLight,
-        tabBarInactiveTintColor: '#6C6A64',
+        tabBarInactiveTintColor: colors.mutedText,
         sceneStyle: {
           backgroundColor: colors.surfaceWarm,
         },
@@ -81,7 +84,7 @@ export default function TabsLayout() {
           paddingTop: 4,
           paddingBottom: 5,
           borderTopWidth: 0,
-          backgroundColor: '#FFFFF8',
+          backgroundColor: colors.surface,
           position: 'absolute',
           marginHorizontal: 24,
           marginBottom: 9,
@@ -98,7 +101,7 @@ export default function TabsLayout() {
           title: 'Inicio',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Inicio">
-              <Ionicons name={focused ? 'home' : 'home-outline'} size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <Ionicons name={focused ? 'home' : 'home-outline'} size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
         }}
@@ -109,7 +112,7 @@ export default function TabsLayout() {
           title: 'Recetas',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Recetas">
-              <MaterialCommunityIcons name="silverware-fork-knife" size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <MaterialCommunityIcons name="silverware-fork-knife" size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
         }}
@@ -120,7 +123,7 @@ export default function TabsLayout() {
           title: 'Favoritos',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Favoritos">
-              <Ionicons name={focused ? 'heart' : 'heart-outline'} size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <Ionicons name={focused ? 'heart' : 'heart-outline'} size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
         }}
@@ -131,7 +134,7 @@ export default function TabsLayout() {
           title: 'Eventos',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Eventos">
-              <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
         }}
@@ -142,7 +145,7 @@ export default function TabsLayout() {
           title: 'Perfil',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Perfil">
-              <Ionicons name={focused ? 'person' : 'person-outline'} size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <Ionicons name={focused ? 'person' : 'person-outline'} size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
         }}

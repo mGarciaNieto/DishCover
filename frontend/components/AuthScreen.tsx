@@ -9,6 +9,7 @@ import { PropsWithChildren } from 'react'
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
+import { useTheme } from '@/context/ThemeContext'
 
 type AuthScreenProps = PropsWithChildren<{
   eyebrow?: string
@@ -18,11 +19,12 @@ type AuthScreenProps = PropsWithChildren<{
 
 export function AuthScreen({ eyebrow, title, subtitle, children }: AuthScreenProps) {
   const insets = useSafeAreaInsets()
+  const { colors } = useTheme()
   const { contentWidthStyle, isShortPhone, isSmallPhone, screenPaddingStyle } = useResponsiveLayout()
   const headerSpacing = isShortPhone ? 26 : 46
 
   return (
-    <View className="bg-dish-surface flex-1">
+    <View className="flex-1" style={{ backgroundColor: colors.surface }}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1">
         <ScrollView
           keyboardShouldPersistTaps="handled"
@@ -38,16 +40,16 @@ export function AuthScreen({ eyebrow, title, subtitle, children }: AuthScreenPro
             },
           ]}
         >
-          {eyebrow ? <Text className="text-dish-soft text-lg font-bold">{eyebrow}</Text> : null}
+          {eyebrow ? <Text className="text-lg font-bold" style={{ color: colors.softText }}>{eyebrow}</Text> : null}
 
           <View style={{ gap: 14, marginBottom: headerSpacing, marginTop: eyebrow ? (isShortPhone ? 22 : 36) : isShortPhone ? 12 : 22 }}>
             <Text
               className={`${isSmallPhone ? 'text-3xl' : 'text-4xl'} font-black text-dish-text`}
-              style={{ lineHeight: isSmallPhone ? 38 : 48 }}
+              style={{ color: colors.text, lineHeight: isSmallPhone ? 38 : 48 }}
             >
               {title}
             </Text>
-            <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} text-dish-soft`}>{subtitle}</Text>
+            <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'}`} style={{ color: colors.softText }}>{subtitle}</Text>
           </View>
 
           {children}
