@@ -30,7 +30,11 @@ export function AppScreen({ title, scroll = true, background = colors.background
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: background }}>
       {scroll ? (
-        <ScrollView style={{ flex: 1 }} contentContainerClassName="pb-32" showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 132 }}
+          showsVerticalScrollIndicator={false}
+        >
           {content}
         </ScrollView>
       ) : (

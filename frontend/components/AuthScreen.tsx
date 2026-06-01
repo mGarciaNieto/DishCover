@@ -19,6 +19,7 @@ type AuthScreenProps = PropsWithChildren<{
 export function AuthScreen({ eyebrow, title, subtitle, children }: AuthScreenProps) {
   const insets = useSafeAreaInsets()
   const { contentWidthStyle, isShortPhone, isSmallPhone, screenPaddingStyle } = useResponsiveLayout()
+  const headerSpacing = isShortPhone ? 26 : 46
 
   return (
     <View className="bg-dish-surface flex-1">
@@ -32,14 +33,14 @@ export function AuthScreen({ eyebrow, title, subtitle, children }: AuthScreenPro
             contentWidthStyle,
             {
               flexGrow: 1,
-              paddingBottom: 32,
-              paddingTop: insets.top + (isShortPhone ? 12 : 20),
+              paddingBottom: insets.bottom + 22,
+              paddingTop: insets.top + (isShortPhone ? 16 : 26),
             },
           ]}
         >
           <Text className="text-dish-soft text-lg font-bold">{eyebrow}</Text>
 
-          <View style={{ gap: 16, marginBottom: isShortPhone ? 34 : 88, marginTop: isShortPhone ? 24 : 40 }}>
+          <View style={{ gap: 14, marginBottom: headerSpacing, marginTop: isShortPhone ? 22 : 36 }}>
             <Text
               className={`${isSmallPhone ? 'text-3xl' : 'text-4xl'} font-black text-dish-text`}
               style={{ lineHeight: isSmallPhone ? 38 : 48 }}

@@ -31,13 +31,14 @@ type PrimaryButtonProps = {
 
 export function PrimaryButton({ label, onPress, disabled = false }: PrimaryButtonProps) {
   const { isShortPhone } = useResponsiveLayout()
+  const buttonHeight = isShortPhone ? 58 : 64
 
   return (
     <Pressable
       className="overflow-hidden rounded-4xl"
       style={({ pressed }) => [
         shadows.soft,
-        { marginTop: isShortPhone ? 38 : 60, minHeight: isShortPhone ? 64 : 72 },
+        { height: buttonHeight, marginTop: isShortPhone ? 30 : 44 },
         disabled && { opacity: 0.58 },
         pressed && !disabled && { opacity: 0.84, transform: [{ scale: 0.99 }] },
       ]}
