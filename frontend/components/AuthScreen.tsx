@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 type AuthScreenProps = PropsWithChildren<{
-  eyebrow: string
+  eyebrow?: string
   title: string
   subtitle: string
 }>
@@ -38,9 +38,9 @@ export function AuthScreen({ eyebrow, title, subtitle, children }: AuthScreenPro
             },
           ]}
         >
-          <Text className="text-dish-soft text-lg font-bold">{eyebrow}</Text>
+          {eyebrow ? <Text className="text-dish-soft text-lg font-bold">{eyebrow}</Text> : null}
 
-          <View style={{ gap: 14, marginBottom: headerSpacing, marginTop: isShortPhone ? 22 : 36 }}>
+          <View style={{ gap: 14, marginBottom: headerSpacing, marginTop: eyebrow ? (isShortPhone ? 22 : 36) : isShortPhone ? 12 : 22 }}>
             <Text
               className={`${isSmallPhone ? 'text-3xl' : 'text-4xl'} font-black text-dish-text`}
               style={{ lineHeight: isSmallPhone ? 38 : 48 }}

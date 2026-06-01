@@ -27,18 +27,20 @@ type PrimaryButtonProps = {
   label: string
   onPress: () => void
   disabled?: boolean
+  topSpacing?: number
 }
 
-export function PrimaryButton({ label, onPress, disabled = false }: PrimaryButtonProps) {
+export function PrimaryButton({ label, onPress, disabled = false, topSpacing }: PrimaryButtonProps) {
   const { isShortPhone } = useResponsiveLayout()
-  const buttonHeight = isShortPhone ? 58 : 64
+  const buttonHeight = isShortPhone ? 56 : 60
+  const marginTop = topSpacing ?? (isShortPhone ? 36 : 48)
 
   return (
     <Pressable
       className="overflow-hidden rounded-4xl"
       style={({ pressed }) => [
         shadows.soft,
-        { height: buttonHeight, marginTop: isShortPhone ? 30 : 44 },
+        { alignSelf: 'stretch', minHeight: buttonHeight, marginTop, width: '100%' },
         disabled && { opacity: 0.58 },
         pressed && !disabled && { opacity: 0.84, transform: [{ scale: 0.99 }] },
       ]}
@@ -50,9 +52,12 @@ export function PrimaryButton({ label, onPress, disabled = false }: PrimaryButto
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={{
-          flex: 1,
           alignItems: 'center',
+          borderRadius: 32,
           justifyContent: 'center',
+          minHeight: buttonHeight,
+          paddingVertical: isShortPhone ? 16 : 18,
+          width: '100%',
         }}
       >
         <Text className="text-2xl font-extrabold text-white">{label}</Text>
