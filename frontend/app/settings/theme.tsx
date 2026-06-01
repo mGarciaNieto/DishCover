@@ -9,12 +9,14 @@ import { Pressable, Switch, Text, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useLanguage } from '@/context/LanguageContext'
 import { useTheme } from '@/context/ThemeContext'
 import { shadows } from '@/constants/theme'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 export default function ThemeSettingsScreen() {
   const { colors, isDarkMode, setDarkMode } = useTheme()
+  const { t } = useLanguage()
   const { contentWidthStyle, screenPaddingStyle } = useResponsiveLayout()
 
   return (
@@ -24,13 +26,13 @@ export default function ThemeSettingsScreen() {
           <Pressable className="h-12 w-12 items-center justify-center rounded-3xl" onPress={() => router.back()} style={{ backgroundColor: colors.surface }}>
             <Ionicons name="chevron-back" size={25} color={colors.text} />
           </Pressable>
-          <Text className="text-3xl font-black" style={{ color: colors.text }}>Tema</Text>
+          <Text className="text-3xl font-black" style={{ color: colors.text }}>{t('theme.header')}</Text>
         </View>
 
         <View className="gap-4">
-          <Text className="text-4xl font-black" style={{ color: colors.text }}>Tema de la aplicación</Text>
+          <Text className="text-4xl font-black" style={{ color: colors.text }}>{t('theme.title')}</Text>
           <Text className="text-xl" style={{ color: colors.mutedText, lineHeight: 30 }}>
-            Activa el modo oscuro para reducir el brillo de la interfaz y guardar la preferencia en este dispositivo.
+            {t('theme.description')}
           </Text>
         </View>
 
@@ -42,9 +44,9 @@ export default function ThemeSettingsScreen() {
             <Ionicons name={isDarkMode ? 'moon' : 'sunny'} size={25} color={colors.green} />
           </View>
           <View className="flex-1">
-            <Text className="text-xl font-extrabold" style={{ color: colors.text }}>Modo oscuro</Text>
+            <Text className="text-xl font-extrabold" style={{ color: colors.text }}>{t('theme.darkMode')}</Text>
             <Text className="mt-1 text-base" style={{ color: colors.mutedText }}>
-              {isDarkMode ? 'Activado' : 'Desactivado'}
+              {isDarkMode ? t('theme.enabled') : t('theme.disabled')}
             </Text>
           </View>
           <Switch

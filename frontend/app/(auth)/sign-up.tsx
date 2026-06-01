@@ -11,9 +11,11 @@ import { useState } from 'react'
 import { AuthScreen } from '@/components/AuthScreen'
 import { Field, FormStack, PrimaryButton } from '@/components/FormControls'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
 
 export default function SignUpScreen() {
   const { register } = useAuth()
+  const { t } = useLanguage()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -23,45 +25,45 @@ export default function SignUpScreen() {
 
   const handleSignUp = async () => {
     if (!username || !email || !firstName || !lastName || !password) {
-      Alert.alert('Faltan datos', 'Completa todos los campos para crear tu cuenta.')
+      Alert.alert(t('signUp.alertMissingTitle'), t('signUp.alertMissingMessage'))
       return
     }
 
     if (password.length < 4) {
-      Alert.alert('Contraseña demasiado corta', 'La contraseña debe tener al menos 4 caracteres.')
+      Alert.alert(t('signUp.alertShortPasswordTitle'), t('signUp.alertShortPasswordMessage'))
       return
     }
 
     try {
       setLoading(true)
       await register({ username, email, firstName, lastName, password })
-      Alert.alert('Cuenta creada', 'Tu cuenta se ha creado correctamente. Ya puedes iniciar sesión.')
+      Alert.alert(t('signUp.alertSuccessTitle'), t('signUp.alertSuccessMessage'))
       router.replace('/(auth)/login')
     } catch {
-      Alert.alert('No se pudo crear la cuenta', 'Revisa los datos o prueba con otro usuario/email.')
+      Alert.alert(t('signUp.alertErrorTitle'), t('signUp.alertErrorMessage'))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <AuthScreen title="Vamos a empezar" subtitle="Completa tus datos para crear una cuenta">
+    <AuthScreen title={t('signUp.title')} subtitle={t('signUp.subtitle')}>
       <FormStack>
-        <Field value={username} onChangeText={setUsername} autoCapitalize="none" placeholder="Introduce tu usuario" />
-        <Field value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder="Introduce tu email" />
-        <Field value={firstName} onChangeText={setFirstName} placeholder="Introduce tu nombre" />
-        <Field value={lastName} onChangeText={setLastName} placeholder="Introduce tus apellidos" />
-        <Field value={password} onChangeText={setPassword} placeholder="Introduce tu contraseña" secureTextEntry />
+        <Field value={username} onChangeText={setUsername} autoCapitalize="none" placeholder={t('auth.usernamePlaceholder')} />
+        <Field value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" placeholder={t('auth.emailPlaceholder')} />
+        <Field value={firstName} onChangeText={setFirstName} placeholder={t('auth.firstNamePlaceholder')} />
+        <Field value={lastName} onChangeText={setLastName} placeholder={t('auth.lastNamePlaceholder')} />
+        <Field value={password} onChangeText={setPassword} placeholder={t('auth.passwordPlaceholder')} secureTextEntry />
       </FormStack>
 
       <View className="mt-12">
-        <PrimaryButton label={loading ? 'Creando...' : 'Registrarme'} onPress={handleSignUp} disabled={loading}/>
+        <PrimaryButton label={loading ? t('signUp.submitLoading') : t('signUp.submit')} onPress={handleSignUp} disabled={loading}/>
       </View>
 
       <View className="mt-auto flex-row flex-wrap justify-center gap-1.5">
-        <Text className="text-lg text-dish-soft">¿Ya tienes cuenta?</Text>
+        <Text className="text-lg text-dish-soft">{t('signUp.accountExists')}</Text>
         <Pressable onPress={() => router.push('/(auth)/login')}>
-          <Text className="font-extrabold text-lg text-dish-green">Inicia sesión</Text>
+          <Text className="font-extrabold text-lg text-dish-green">{t('auth.loginLink')}</Text>
         </Pressable>
       </View>
     </AuthScreen>

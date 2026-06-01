@@ -9,6 +9,7 @@ import { Tabs } from 'expo-router'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import type { ReactNode } from 'react'
 import { Text, View } from 'react-native'
+import { useLanguage } from '@/context/LanguageContext'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 import { useTheme } from '@/context/ThemeContext'
 
@@ -61,6 +62,7 @@ function TabIconContent({ children, focused, label }: TabIconContentProps) {
 
 export default function TabsLayout() {
   const { colors } = useTheme()
+  const { t } = useLanguage()
 
   return (
     <Tabs
@@ -98,9 +100,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Inicio',
+          title: t('tabs.home'),
           tabBarIcon: ({ focused }) => (
-            <TabIconContent focused={focused} label="Inicio">
+            <TabIconContent focused={focused} label={t('tabs.home')}>
               <Ionicons name={focused ? 'home' : 'home-outline'} size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
@@ -109,9 +111,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="recipes"
         options={{
-          title: 'Recetas',
+          title: t('tabs.recipes'),
           tabBarIcon: ({ focused }) => (
-            <TabIconContent focused={focused} label="Recetas">
+            <TabIconContent focused={focused} label={t('tabs.recipes')}>
               <MaterialCommunityIcons name="silverware-fork-knife" size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
@@ -120,9 +122,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="likes"
         options={{
-          title: 'Favoritos',
+          title: t('tabs.favorites'),
           tabBarIcon: ({ focused }) => (
-            <TabIconContent focused={focused} label="Favoritos">
+            <TabIconContent focused={focused} label={t('tabs.favorites')}>
               <Ionicons name={focused ? 'heart' : 'heart-outline'} size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
@@ -131,9 +133,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="events"
         options={{
-          title: 'Eventos',
+          title: t('tabs.events'),
           tabBarIcon: ({ focused }) => (
-            <TabIconContent focused={focused} label="Eventos">
+            <TabIconContent focused={focused} label={t('tabs.events')}>
               <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),
@@ -142,9 +144,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Perfil',
+          title: t('tabs.profile'),
           tabBarIcon: ({ focused }) => (
-            <TabIconContent focused={focused} label="Perfil">
+            <TabIconContent focused={focused} label={t('tabs.profile')}>
               <Ionicons name={focused ? 'person' : 'person-outline'} size={21} color={focused ? '#FFFFF8' : colors.mutedText} />
             </TabIconContent>
           ),

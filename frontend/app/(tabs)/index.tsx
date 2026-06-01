@@ -12,6 +12,7 @@ import { AppScreen } from '@/components/AppScreen'
 import { RecipeCard } from '@/components/RecipeCard'
 import { Recipe, recipes } from '@/data/demo'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { fetchRecipes } from '@/services/api'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 import { useTheme } from '@/context/ThemeContext'
@@ -19,6 +20,7 @@ import { useTheme } from '@/context/ThemeContext'
 export default function HomeScreen() {
   const { isSmallPhone } = useResponsiveLayout()
   const { colors, isDarkMode } = useTheme()
+  const { t } = useLanguage()
   const { token } = useAuth()
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('')
@@ -57,7 +59,7 @@ export default function HomeScreen() {
     <AppScreen scroll={false}>
       <View className="gap-6 pb-6">
         <View className={`${isSmallPhone ? 'gap-4' : 'flex-row items-center gap-4'}`}>
-          <Text className="text-3xl font-black" style={{ color: isDarkMode ? colors.text : colors.greenDark }}>Recetas</Text>
+          <Text className="text-3xl font-black" style={{ color: isDarkMode ? colors.text : colors.greenDark }}>{t('home.title')}</Text>
           <View
             className={`${isSmallPhone ? 'w-full' : 'flex-1'} min-h-14 flex-row items-center gap-2 rounded-sm px-3.5`}
             style={{ backgroundColor: colors.mutedSurface }}
@@ -66,7 +68,7 @@ export default function HomeScreen() {
             <TextInput
               value={query}
               onChangeText={setQuery}
-              placeholder="Buscar recetas..."
+              placeholder={t('home.search')}
               placeholderTextColor={colors.mutedText}
               className="flex-1 text-lg"
               style={{ color: colors.text }}
@@ -99,7 +101,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="pb-32"
-        ListEmptyComponent={<Text className="text-lg leading-7" style={{ color: colors.mutedText }}>No hay recetas para esta búsqueda.</Text>}
+        ListEmptyComponent={<Text className="text-lg leading-7" style={{ color: colors.mutedText }}>{t('home.empty')}</Text>}
       />
     </AppScreen>
   )

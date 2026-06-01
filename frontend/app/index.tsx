@@ -11,10 +11,12 @@ import { Ionicons } from '@expo/vector-icons'
 import { shadows } from '@/constants/theme'
 import { LinearGradient } from 'expo-linear-gradient'
 import { StatusBar } from 'expo-status-bar'
+import { useLanguage } from '@/context/LanguageContext'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function OnboardingScreen() {
+  const { t } = useLanguage()
   const { contentWidthStyle, height, isSmallPhone, screenPaddingStyle, width } = useResponsiveLayout()
   const insets = useSafeAreaInsets()
   const compactHeight = height < 860
@@ -77,7 +79,7 @@ export default function OnboardingScreen() {
           className={`text-dish-text font-poppins-bold text-center ${isSmallPhone ? 'text-4xl' : 'text-5xl'}`}
           style={{ lineHeight: isSmallPhone ? 40 : 46 }}
         >
-          Bienvenido a{'\n'}
+          {t('onboarding.title')}{'\n'}
           <Text className="text-dish-green-dark font-poppins-medium">DishCover!</Text>
         </Text>
 
@@ -89,7 +91,7 @@ export default function OnboardingScreen() {
             marginBottom: compactHeight ? 24 : 30,
           }}
         >
-          Descubre, cocina y comparte recetas increíbles con la comunidad.
+          {t('onboarding.description')}
         </Text>
         <Pressable
           className="overflow-hidden rounded-4xl"
@@ -116,7 +118,7 @@ export default function OnboardingScreen() {
             }}
           >
             <View className="flex-row items-center justify-center gap-3.5">
-              <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} font-poppins font-extrabold text-white`}>Empezar</Text>
+              <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} font-poppins font-extrabold text-white`}>{t('onboarding.start')}</Text>
               <Ionicons name="arrow-forward" size={isSmallPhone ? 24 : 28} color="#FFFFFF" />
             </View>
           </LinearGradient>
@@ -126,8 +128,8 @@ export default function OnboardingScreen() {
           style={{ marginTop: compactHeight ? 24 : 40 }}
           onPress={() => router.push('/(auth)/login')}
         >
-          <Text className={`${isSmallPhone ? 'text-base' : 'text-lg'} text-dish-muted`}>¿Ya tienes una cuenta?</Text>
-          <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} text-dish-amber font-extrabold underline`}>Iniciar sesión</Text>
+          <Text className={`${isSmallPhone ? 'text-base' : 'text-lg'} text-dish-muted`}>{t('onboarding.alreadyAccount')}</Text>
+          <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} text-dish-amber font-extrabold underline`}>{t('auth.loginLink')}</Text>
         </Pressable>
       </View>
     </View>

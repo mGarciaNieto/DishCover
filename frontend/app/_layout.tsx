@@ -8,6 +8,7 @@
 import { Stack } from 'expo-router'
 import '@/global.css'
 import { AuthProvider } from '@/context/AuthContext'
+import { LanguageProvider } from '@/context/LanguageContext'
 import { ThemeProvider, useTheme } from '@/context/ThemeContext'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useFonts } from 'expo-font'
@@ -30,6 +31,7 @@ function AppStack() {
         <Stack.Screen name="event/all" />
         <Stack.Screen name="settings/index" />
         <Stack.Screen name="settings/theme" />
+        <Stack.Screen name="settings/language" />
       </Stack>
     </>
   )
@@ -49,9 +51,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <AuthProvider>
-          <AppStack />
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <AppStack />
+          </AuthProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   )

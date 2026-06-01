@@ -9,6 +9,7 @@ import { Alert, Pressable, Text, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useLanguage } from '@/context/LanguageContext'
 import { useTheme } from '@/context/ThemeContext'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
@@ -47,10 +48,11 @@ function SettingsItem({ icon, label, onPress }: SettingsItemProps) {
 
 export default function SettingsScreen() {
   const { colors } = useTheme()
+  const { t } = useLanguage()
   const { contentWidthStyle, screenPaddingStyle } = useResponsiveLayout()
 
   const showPendingAlert = () => {
-    Alert.alert('Próximamente', 'Este paso se implementará para la siguiente PEC.')
+    Alert.alert(t('alerts.pendingTitle'), t('alerts.pendingMessage'))
   }
 
   return (
@@ -60,15 +62,15 @@ export default function SettingsScreen() {
           <Pressable className="h-12 w-12 items-center justify-center rounded-3xl" onPress={() => router.back()} style={{ backgroundColor: colors.surface }}>
             <Ionicons name="chevron-back" size={25} color={colors.text} />
           </Pressable>
-          <Text className="text-3xl font-black" style={{ color: colors.text }}>Settings</Text>
+          <Text className="text-3xl font-black" style={{ color: colors.text }}>{t('settings.title')}</Text>
         </View>
 
         <View style={{ gap: 16 }}>
-          <SettingsItem icon="color-palette-outline" label="Tema de la aplicación" onPress={() => router.push('/settings/theme')} />
-          <SettingsItem icon="language-outline" label="Idioma" onPress={showPendingAlert} />
-          <SettingsItem icon="shield-checkmark-outline" label="Política de privacidad" onPress={showPendingAlert} />
-          <SettingsItem icon="document-text-outline" label="Términos de uso" onPress={showPendingAlert} />
-          <SettingsItem icon="information-circle-outline" label="Acerca de esta aplicación" onPress={showPendingAlert} />
+          <SettingsItem icon="color-palette-outline" label={t('settings.theme')} onPress={() => router.push('/settings/theme')} />
+          <SettingsItem icon="language-outline" label={t('settings.language')} onPress={() => router.push('/settings/language')} />
+          <SettingsItem icon="shield-checkmark-outline" label={t('settings.privacy')} onPress={showPendingAlert} />
+          <SettingsItem icon="document-text-outline" label={t('settings.terms')} onPress={showPendingAlert} />
+          <SettingsItem icon="information-circle-outline" label={t('settings.about')} onPress={showPendingAlert} />
         </View>
       </View>
     </SafeAreaView>
