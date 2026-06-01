@@ -76,6 +76,7 @@ export default function CreateRecipeScreen() {
   const [ingredients, setIngredients] = useState('')
   const [loading, setLoading] = useState(false)
   const stackCookingTime = width < 380
+  const publishButtonHeight = isShortPhone ? 58 : 68
 
   const handleCreateRecipe = async () => {
     // El backend espera cookingTime como número entero, no como texto.
@@ -287,7 +288,7 @@ export default function CreateRecipeScreen() {
           onPress={handleCreateRecipe}
           style={({ pressed }) => [
             shadows.soft,
-            { minHeight: isShortPhone ? 68 : 80 },
+            { minHeight: publishButtonHeight, width: '100%' },
             loading && { opacity: 0.58 },
             pressed && !loading && { opacity: 0.86 },
           ]}
@@ -296,7 +297,15 @@ export default function CreateRecipeScreen() {
             colors={['#17661E', '#5CAB4F']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
-            style={{ alignItems: 'center', flex: 1, flexDirection: 'row', gap: 12, justifyContent: 'center' }}
+            style={{
+              alignItems: 'center',
+              flexDirection: 'row',
+              gap: 12,
+              justifyContent: 'center',
+              minHeight: publishButtonHeight,
+              paddingVertical: isShortPhone ? 16 : 18,
+              width: '100%',
+            }}
           >
             {loading ? <ActivityIndicator color="#FFFFF8" /> : null}
             <Text className="font-poppins-bold text-2xl text-white">
