@@ -20,8 +20,8 @@ type TabIconContentProps = {
 
 function TabIconContent({ children, focused, label }: TabIconContentProps) {
   const { isSmallPhone: compact } = useResponsiveLayout()
-  const focusedWidth = compact ? 70 : 80
-  const idleWidth = compact ? 56 : 64
+  const focusedWidth = compact ? 52 : 58
+  const idleWidth = compact ? 44 : 48
 
   // La cápsula activa se mantiene compacta para no desbordar en las pestañas laterales.
   return (
@@ -31,7 +31,7 @@ function TabIconContent({ children, focused, label }: TabIconContentProps) {
         backgroundColor: focused ? colors.greenLight : 'transparent',
         borderRadius: 999,
         gap: 2,
-        height: compact ? 46 : 50,
+        height: compact ? 38 : 40,
         justifyContent: 'center',
         width: focused ? focusedWidth : idleWidth,
       }}
@@ -44,7 +44,7 @@ function TabIconContent({ children, focused, label }: TabIconContentProps) {
         style={{
           color: focused ? '#FFFFF8' : '#6C6A64',
           fontFamily: focused ? 'Poppins-Bold' : 'Poppins-Medium',
-          fontSize: compact ? 10 : 11,
+          fontSize: 9,
           includeFontPadding: false,
           letterSpacing: 0,
           textAlign: 'center',
@@ -71,20 +71,21 @@ export default function TabsLayout() {
         },
         tabBarItemStyle: {
           alignItems: 'center',
-          height: 62,
+          height: 46,
           justifyContent: 'center',
           overflow: 'visible',
         },
         tabBarStyle: {
-          minHeight: 78,
-          paddingTop: 9,
-          paddingBottom: 11,
+          height: 58,
+          minHeight: 58,
+          paddingTop: 4,
+          paddingBottom: 5,
           borderTopWidth: 0,
           backgroundColor: '#FFFFF8',
           position: 'absolute',
-          marginHorizontal: 18,
-          marginBottom: 12,
-          borderRadius: 28,
+          marginHorizontal: 24,
+          marginBottom: 9,
+          borderRadius: 22,
           boxShadow: '0px 10px 22px rgba(11, 48, 23, 0.12)',
           elevation: 10,
           overflow: 'visible',
@@ -97,7 +98,7 @@ export default function TabsLayout() {
           title: 'Inicio',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Inicio">
-              <Ionicons name={focused ? 'home' : 'home-outline'} size={23} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <Ionicons name={focused ? 'home' : 'home-outline'} size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
             </TabIconContent>
           ),
         }}
@@ -108,7 +109,7 @@ export default function TabsLayout() {
           title: 'Recetas',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Recetas">
-              <MaterialCommunityIcons name="silverware-fork-knife" size={24} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <MaterialCommunityIcons name="silverware-fork-knife" size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
             </TabIconContent>
           ),
         }}
@@ -119,7 +120,7 @@ export default function TabsLayout() {
           title: 'Favoritos',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Favoritos">
-              <Ionicons name={focused ? 'heart' : 'heart-outline'} size={24} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <Ionicons name={focused ? 'heart' : 'heart-outline'} size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
             </TabIconContent>
           ),
         }}
@@ -130,7 +131,7 @@ export default function TabsLayout() {
           title: 'Eventos',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Eventos">
-              <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={23} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
             </TabIconContent>
           ),
         }}
@@ -141,7 +142,7 @@ export default function TabsLayout() {
           title: 'Perfil',
           tabBarIcon: ({ focused }) => (
             <TabIconContent focused={focused} label="Perfil">
-              <Ionicons name={focused ? 'person' : 'person-outline'} size={23} color={focused ? '#FFFFF8' : '#6C6A64'} />
+              <Ionicons name={focused ? 'person' : 'person-outline'} size={21} color={focused ? '#FFFFF8' : '#6C6A64'} />
             </TabIconContent>
           ),
         }}
