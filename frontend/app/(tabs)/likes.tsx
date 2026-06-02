@@ -14,10 +14,12 @@ import { RecipeCard } from '@/components/RecipeCard'
 import { Recipe } from '@/data/demo'
 import { colors } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { fetchFavoriteRecipeIds, fetchRecipeById } from '@/services/api'
 
 export default function LikesScreen() {
   const { token } = useAuth()
+  const { t } = useLanguage()
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -46,7 +48,7 @@ export default function LikesScreen() {
         } catch {
           if (active) {
             setFavoriteRecipes([])
-            setError('No se pudieron cargar tus recetas favoritas.')
+            setError(t('likes.error'))
           }
         } finally {
           if (active) {
@@ -60,27 +62,27 @@ export default function LikesScreen() {
       return () => {
         active = false
       }
-    }, [token]),
+    }, [t, token]),
   )
 
   return (
-    <AppScreen title="Favoritos">
+    <AppScreen title={t('likes.title')}>
       <View className="mb-7 flex-row items-center gap-3 rounded-3xl bg-dish-muted-surface p-4">
         <Ionicons name="heart" size={26} color={colors.green} />
-        <Text className="flex-1 text-lg font-bold leading-6 text-dish-muted">Tus recetas guardadas para cocinar después.</Text>
+        <Text className="flex-1 text-lg font-bold leading-6 text-dish-muted">{t('likes.description')}</Text>
       </View>
 
       {loading ? (
         <View className="min-h-56 items-center justify-center">
           <ActivityIndicator size="large" color={colors.green} />
-          <Text className="mt-4 text-base font-bold text-dish-muted">Cargando favoritos...</Text>
+          <Text className="mt-4 text-base font-bold text-dish-muted">{t('likes.loading')}</Text>
         </View>
       ) : null}
 
       {!loading && error ? <Text className="rounded-3xl bg-dish-muted-surface p-5 text-base font-bold leading-6 text-dish-muted">{error}</Text> : null}
 
       {!loading && !error && favoriteRecipes.length === 0 ? (
-        <Text className="rounded-3xl bg-dish-muted-surface p-5 text-base font-bold leading-6 text-dish-muted">Todavía no has guardado ninguna receta como favorita.</Text>
+        <Text className="rounded-3xl bg-dish-muted-surface p-5 text-base font-bold leading-6 text-dish-muted">{t('likes.empty')}</Text>
       ) : null}
 
       {!loading && favoriteRecipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)}

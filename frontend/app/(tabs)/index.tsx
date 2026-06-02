@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useEffect, useMemo, useState } from 'react'
 import { AppScreen } from '@/components/AppScreen'
 import { RecipeCard } from '@/components/RecipeCard'
+import { categoryTranslationKeys } from '@/constants/translations'
 import { Recipe, recipes } from '@/data/demo'
 import { useAuth } from '@/context/AuthContext'
 import { useLanguage } from '@/context/LanguageContext'
@@ -79,6 +80,7 @@ export default function HomeScreen() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="flex-row gap-3 pr-6">
           {visibleCategories.map((category) => {
             const active = category === activeCategory
+            const categoryKey = categoryTranslationKeys[category]
             return (
               <Pressable
                 key={category}
@@ -86,7 +88,7 @@ export default function HomeScreen() {
                 style={{ backgroundColor: active ? colors.green : colors.mutedSurface }}
                 onPress={() => setActiveCategory(active ? '' : category)}
               >
-                <Text className="font-extrabold text-base" style={{ color: active ? '#FFFFFF' : colors.text }}>{category}</Text>
+                <Text className="font-extrabold text-base" style={{ color: active ? '#FFFFFF' : colors.text }}>{categoryKey ? t(categoryKey) : category}</Text>
               </Pressable>
             )
           })}

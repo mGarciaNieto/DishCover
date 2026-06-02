@@ -10,20 +10,27 @@ import { router } from 'expo-router'
 import { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, FlatList, ImageBackground, Pressable, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { colors, shadows } from '@/constants/theme'
+import { categoryTranslationKeys } from '@/constants/translations'
+import { shadows } from '@/constants/theme'
 import { Event, events as demoEvents } from '@/data/demo'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
+import { useTheme } from '@/context/ThemeContext'
 import { fetchEvents } from '@/services/api'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
-const screenBackground = colors.surfaceWarm
-
 function EventCard({ event }: { event: Event }) {
   const { isSmallPhone } = useResponsiveLayout()
+  const { colors, isDarkMode } = useTheme()
+  const { t } = useLanguage()
+  const categoryKey = event.category ? categoryTranslationKeys[event.category] : undefined
+  const categoryLabel = categoryKey ? t(categoryKey) : event.category ?? t('category.event')
+  const categoryBadgeBackground = isDarkMode ? '#58D66B' : '#4DB84F'
+  const categoryBadgeText = isDarkMode ? '#0B3213' : '#163D18'
 
   // Imagen superior de la tarjeta para mantener continuidad visual con el mockup de eventos.
   return (
-    <View className="overflow-hidden rounded-4xl bg-white" style={shadows.soft}>
+    <View className="overflow-hidden rounded-4xl" style={[shadows.soft, { backgroundColor: colors.surface }]}>
       <ImageBackground
         source={event.image}
         resizeMode="cover"
@@ -32,23 +39,23 @@ function EventCard({ event }: { event: Event }) {
         style={{ height: isSmallPhone ? 152 : 176 }}
       >
         <View className="absolute inset-0 bg-black/30" />
-        <View className="self-start rounded-3xl bg-dish-green-light px-4 py-2">
-          <Text className="font-poppins-bold text-xs uppercase text-dish-green-dark">{event.category ?? 'Evento'}</Text>
+        <View className="self-start rounded-3xl px-4 py-2" style={{ backgroundColor: categoryBadgeBackground }}>
+          <Text className="font-poppins-bold text-xs uppercase" style={{ color: categoryBadgeText }}>{categoryLabel}</Text>
         </View>
       </ImageBackground>
 
       <View className="gap-4 p-5">
-        <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} font-poppins-bold text-dish-text`}>{event.title}</Text>
-        <Text className="font-poppins-medium text-base leading-6 text-dish-muted">{event.description}</Text>
+        <Text className={`${isSmallPhone ? 'text-xl' : 'text-2xl'} font-poppins-bold`} style={{ color: colors.text }}>{event.title}</Text>
+        <Text className="font-poppins-medium text-base leading-6" style={{ color: colors.mutedText }}>{event.description}</Text>
 
         <View className="flex-row flex-wrap gap-3">
-          <View className="flex-row items-center gap-2 rounded-3xl bg-dish-surface-warm px-4 py-3">
+          <View className="flex-row items-center gap-2 rounded-3xl px-4 py-3" style={{ backgroundColor: colors.surfaceWarm }}>
             <Ionicons name="calendar-outline" size={19} color={colors.greenDark} />
-            <Text className="font-poppins-bold text-sm text-dish-green-dark">{event.date}</Text>
+            <Text className="font-poppins-bold text-sm" style={{ color: colors.greenDark }}>{event.date}</Text>
           </View>
-          <View className="flex-row items-center gap-2 rounded-3xl bg-dish-surface-warm px-4 py-3">
+          <View className="flex-row items-center gap-2 rounded-3xl px-4 py-3" style={{ backgroundColor: colors.surfaceWarm }}>
             <Ionicons name="timer-outline" size={19} color={colors.greenDark} />
-            <Text className="font-poppins-bold text-sm text-dish-green-dark">{event.duration}</Text>
+            <Text className="font-poppins-bold text-sm" style={{ color: colors.greenDark }}>{event.duration}</Text>
           </View>
         </View>
       </View>
@@ -59,6 +66,8 @@ function EventCard({ event }: { event: Event }) {
 export default function AllEventsScreen() {
   const { contentWidthStyle, horizontalPadding, isSmallPhone, screenPaddingStyle } = useResponsiveLayout()
   const { token } = useAuth()
+  const { colors } = useTheme()
+  const { t } = useLanguage()
   const [remoteEvents, setRemoteEvents] = useState<Event[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState('')
@@ -110,25 +119,26 @@ export default function AllEventsScreen() {
   }, [search, visibleEvents])
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: screenBackground }}>
-      <View style={[screenPaddingStyle, contentWidthStyle, { backgroundColor: screenBackground, paddingTop: 24 }]}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.surfaceWarm }}>
+      <View style={[screenPaddingStyle, contentWidthStyle, { backgroundColor: colors.surfaceWarm, paddingTop: 24 }]}>
         <View className="flex-row items-center gap-4">
-          <Pressable accessibilityLabel="Volver" className="h-11 w-11 items-center justify-center rounded-3xl" onPress={() => router.back()}>
+          <Pressable accessibilityLabel={t('common.back')} className="h-11 w-11 items-center justify-center rounded-3xl" onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={27} color={colors.greenDark} />
           </Pressable>
           <View className="flex-1">
-            <Text className={`${isSmallPhone ? 'text-2xl' : 'text-3xl'} font-poppins-bold text-dish-green-dark`}>Todos los eventos</Text>
-            <Text className="font-poppins-medium mt-1 text-base text-dish-muted">Descubre actividades culinarias disponibles.</Text>
+            <Text className={`${isSmallPhone ? 'text-2xl' : 'text-3xl'} font-poppins-bold`} style={{ color: colors.greenDark }}>{t('events.all.title')}</Text>
+            <Text className="font-poppins-medium mt-1 text-base" style={{ color: colors.mutedText }}>{t('events.all.subtitle')}</Text>
           </View>
         </View>
 
-        <View className="mt-7 h-16 flex-row items-center gap-3 rounded-4xl bg-white px-5" style={shadows.soft}>
+        <View className="mt-7 h-16 flex-row items-center gap-3 rounded-4xl px-5" style={[shadows.soft, { backgroundColor: colors.surface }]}>
           <Ionicons name="search" size={22} color={colors.mutedText} />
           <TextInput
-            className="font-poppins-medium flex-1 text-base text-dish-text"
+            className="font-poppins-medium flex-1 text-base"
             onChangeText={setSearch}
-            placeholder="Buscar eventos..."
-            placeholderTextColor="#8B9286"
+            placeholder={t('events.all.search')}
+            placeholderTextColor={colors.mutedText}
+            style={{ color: colors.text }}
             value={search}
           />
         </View>
@@ -136,7 +146,7 @@ export default function AllEventsScreen() {
         {loading ? (
           <View className="mt-5 flex-row items-center gap-3">
             <ActivityIndicator color={colors.greenDark} />
-            <Text className="font-poppins-medium text-dish-muted">Actualizando eventos...</Text>
+            <Text className="font-poppins-medium" style={{ color: colors.mutedText }}>{t('events.all.updating')}</Text>
           </View>
         ) : null}
       </View>
@@ -151,7 +161,7 @@ export default function AllEventsScreen() {
           { paddingBottom: 130, paddingHorizontal: horizontalPadding, paddingTop: 26 },
         ]}
         ListEmptyComponent={
-          <Text className="rounded-4xl bg-white p-5 text-center font-poppins-bold text-dish-muted">No se han encontrado eventos.</Text>
+          <Text className="rounded-4xl p-5 text-center font-poppins-bold" style={{ backgroundColor: colors.surface, color: colors.mutedText }}>{t('events.all.empty')}</Text>
         }
         showsVerticalScrollIndicator={false}
       />

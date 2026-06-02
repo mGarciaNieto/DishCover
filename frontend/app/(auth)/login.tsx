@@ -12,11 +12,12 @@ import { AuthScreen } from '@/components/AuthScreen'
 import { Field, FormStack, PrimaryButton } from '@/components/FormControls'
 import { useAuth } from '@/context/AuthContext'
 import { useLanguage } from '@/context/LanguageContext'
-import { StatusBar } from 'expo-status-bar'
+import { useTheme } from '@/context/ThemeContext'
 
 export default function LoginScreen() {
   const { login } = useAuth()
   const { t } = useLanguage()
+  const { isDarkMode } = useTheme()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -44,27 +45,24 @@ export default function LoginScreen() {
   }
 
   return (
-    <>
-      <StatusBar style="dark" />
-      <AuthScreen eyebrow="" title={t('login.title')} subtitle={t('login.subtitle')}>
-        <FormStack>
-          <Field value={username} onChangeText={setUsername} autoCapitalize="none" placeholder={t('auth.usernamePlaceholder')} />
-          <Field value={password} onChangeText={setPassword} placeholder={t('auth.passwordPlaceholder')} secureTextEntry />
-        </FormStack>
+    <AuthScreen eyebrow="" title={t('login.title')} subtitle={t('login.subtitle')}>
+      <FormStack>
+        <Field value={username} onChangeText={setUsername} autoCapitalize="none" placeholder={t('auth.usernamePlaceholder')} />
+        <Field value={password} onChangeText={setPassword} placeholder={t('auth.passwordPlaceholder')} secureTextEntry />
+      </FormStack>
 
-        <Pressable className="mt-7 mb-7 self-end">
-          <Text className="text-lg font-extrabold text-dish-muted">{t('login.forgotPassword')}</Text>
+      <Pressable className="mt-7 mb-7 self-end">
+        <Text className="text-lg font-extrabold text-dish-muted">{t('login.forgotPassword')}</Text>
+      </Pressable>
+
+      <PrimaryButton label={loading ? t('login.submitLoading') : t('login.submit')} onPress={handleLogin} disabled={loading} />
+
+      <View className="mt-auto flex-row flex-wrap justify-center gap-1.5">
+        <Text className="text-lg text-dish-soft">{t('login.noAccount')}</Text>
+        <Pressable onPress={() => router.push('/(auth)/sign-up')}>
+          <Text className="text-lg font-extrabold" style={{ color: isDarkMode ? '#FFFFFF' : '#008A2E' }}>{t('auth.registerLink')}</Text>
         </Pressable>
-
-        <PrimaryButton label={loading ? t('login.submitLoading') : t('login.submit')} onPress={handleLogin} disabled={loading} />
-
-        <View className="mt-auto flex-row flex-wrap justify-center gap-1.5">
-          <Text className="text-lg text-dish-soft">{t('login.noAccount')}</Text>
-          <Pressable onPress={() => router.push('/(auth)/sign-up')}>
-            <Text className="text-dish-green text-lg font-extrabold">{t('auth.registerLink')}</Text>
-          </Pressable>
-        </View>
-      </AuthScreen>
-    </>
+      </View>
+    </AuthScreen>
   )
 }

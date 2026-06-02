@@ -13,12 +13,14 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Recipe } from '@/data/demo'
 import { colors, shadows } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { deleteRecipe, fetchRecipes } from '@/services/api'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 export default function DeleteRecipeScreen() {
   const { contentWidthStyle, isShortPhone, screenPaddingStyle } = useResponsiveLayout()
   const { token } = useAuth()
+  const { t } = useLanguage()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -26,7 +28,7 @@ export default function DeleteRecipeScreen() {
   const loadRecipes = useCallback(async () => {
     if (!token) {
       setRecipes([])
-      setError('Inicia sesión para gestionar recetas.')
+      setError(t('deleteRecipe.loginRequired'))
       return
     }
 
@@ -38,11 +40,11 @@ export default function DeleteRecipeScreen() {
       setRecipes(apiRecipes)
     } catch {
       setRecipes([])
-      setError('No se pudieron cargar las recetas.')
+      setError(t('deleteRecipe.error'))
     } finally {
       setLoading(false)
     }
-  }, [token])
+  }, [t, token])
 
   useFocusEffect(
     useCallback(() => {
@@ -52,22 +54,22 @@ export default function DeleteRecipeScreen() {
 
   const handleDeleteRecipe = (recipe: Recipe) => {
     if (!token) {
-      Alert.alert('Sesión necesaria', 'Inicia sesión para eliminar recetas.')
+      Alert.alert(t('recipeDetails.alertSessionTitle'), t('deleteRecipe.alertMissingSessionMessage'))
       return
     }
 
-    Alert.alert('Eliminar receta', `¿Quieres eliminar "${recipe.title}"?`, [
-      { text: 'Cancelar', style: 'cancel' },
+    Alert.alert(t('deleteRecipe.confirmTitle'), t('deleteRecipe.confirmMessage').replace('{title}', recipe.title), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Eliminar',
+        text: t('common.delete'),
         style: 'destructive',
         onPress: async () => {
           try {
             await deleteRecipe(token, recipe.id)
             setRecipes((currentRecipes) => currentRecipes.filter((currentRecipe) => currentRecipe.id !== recipe.id))
-            Alert.alert('Receta eliminada', 'La receta se ha eliminado correctamente.')
+            Alert.alert(t('deleteRecipe.alertSuccessTitle'), t('deleteRecipe.alertSuccessMessage'))
           } catch {
-            Alert.alert('No se pudo eliminar', 'Comprueba que tienes permisos para eliminar esta receta.')
+            Alert.alert(t('deleteRecipe.alertErrorTitle'), t('deleteRecipe.alertErrorMessage'))
           }
         },
       },
@@ -82,15 +84,15 @@ export default function DeleteRecipeScreen() {
             <Ionicons name="chevron-back" size={25} color={colors.text} />
           </Pressable>
           <View className="flex-1">
-            <Text className="text-3xl font-black text-dish-text">Eliminar receta</Text>
-            <Text className="mt-1 text-base font-bold text-dish-muted">Selecciona una receta para retirarla.</Text>
+            <Text className="text-3xl font-black text-dish-text">{t('deleteRecipe.title')}</Text>
+            <Text className="mt-1 text-base font-bold text-dish-muted">{t('deleteRecipe.subtitle')}</Text>
           </View>
         </View>
 
         {loading ? (
           <View className="min-h-64 items-center justify-center">
             <ActivityIndicator size="large" color={colors.green} />
-            <Text className="mt-4 text-base font-bold text-dish-muted">Cargando recetas...</Text>
+            <Text className="mt-4 text-base font-bold text-dish-muted">{t('deleteRecipe.loading')}</Text>
           </View>
         ) : null}
 
@@ -102,7 +104,7 @@ export default function DeleteRecipeScreen() {
             keyExtractor={(recipe) => recipe.id.toString()}
             showsVerticalScrollIndicator={false}
             contentContainerClassName="pb-32"
-            ListEmptyComponent={<Text className="rounded-3xl bg-dish-muted-surface p-5 text-base font-bold leading-6 text-dish-muted">No hay recetas disponibles para eliminar.</Text>}
+            ListEmptyComponent={<Text className="rounded-3xl bg-dish-muted-surface p-5 text-base font-bold leading-6 text-dish-muted">{t('deleteRecipe.empty')}</Text>}
             renderItem={({ item }) => (
               <View className="mb-6 rounded-3xl bg-dish-surface p-4" style={shadows.soft}>
                 <View className="overflow-hidden rounded-3xl bg-dish-muted-surface" style={{ aspectRatio: 16 / 9, width: '100%' }}>
@@ -117,11 +119,11 @@ export default function DeleteRecipeScreen() {
                 <View className="mt-4 flex-row items-center justify-between gap-3">
                   <View className="flex-row items-center gap-2 rounded-3xl bg-dish-muted-surface px-4 py-3">
                     <Ionicons name="time-outline" size={18} color={colors.green} />
-                    <Text className="font-bold text-dish-muted">{item.cookingTime} min</Text>
+                    <Text className="font-bold text-dish-muted">{item.cookingTime} {t('unit.minute')}</Text>
                   </View>
                   <Pressable className="min-h-12 flex-1 flex-row items-center justify-center gap-2 rounded-3xl bg-dish-danger px-4" onPress={() => handleDeleteRecipe(item)}>
                     <Ionicons name="trash-outline" size={20} color="#FFFFFF" />
-                    <Text className="font-extrabold text-white">Eliminar</Text>
+                    <Text className="font-extrabold text-white">{t('common.delete')}</Text>
                   </Pressable>
                 </View>
               </View>

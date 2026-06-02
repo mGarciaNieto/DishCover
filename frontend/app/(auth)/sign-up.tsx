@@ -12,10 +12,12 @@ import { AuthScreen } from '@/components/AuthScreen'
 import { Field, FormStack, PrimaryButton } from '@/components/FormControls'
 import { useAuth } from '@/context/AuthContext'
 import { useLanguage } from '@/context/LanguageContext'
+import { useTheme } from '@/context/ThemeContext'
 
 export default function SignUpScreen() {
   const { register } = useAuth()
   const { t } = useLanguage()
+  const { isDarkMode } = useTheme()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -63,7 +65,7 @@ export default function SignUpScreen() {
       <View className="mt-auto flex-row flex-wrap justify-center gap-1.5">
         <Text className="text-lg text-dish-soft">{t('signUp.accountExists')}</Text>
         <Pressable onPress={() => router.push('/(auth)/login')}>
-          <Text className="font-extrabold text-lg text-dish-green">{t('auth.loginLink')}</Text>
+          <Text className="text-lg font-extrabold" style={{ color: isDarkMode ? '#FFFFFF' : '#008A2E' }}>{t('auth.loginLink')}</Text>
         </Pressable>
       </View>
     </AuthScreen>

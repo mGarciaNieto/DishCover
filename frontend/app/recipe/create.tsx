@@ -11,8 +11,10 @@ import { router } from 'expo-router'
 import { useRef, useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { categoryTranslationKeys } from '@/constants/translations'
 import { colors, shadows } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
 import { createRecipe } from '@/services/api'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
@@ -66,6 +68,7 @@ function RecipeField({
 export default function CreateRecipeScreen() {
   const { contentWidthStyle, horizontalPadding, isShortPhone, isSmallPhone, width } = useResponsiveLayout()
   const { token } = useAuth()
+  const { t } = useLanguage()
   const ingredientsRef = useRef<TextInput>(null)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -83,22 +86,22 @@ export default function CreateRecipeScreen() {
     const parsedCookingTime = Number(cookingTime)
 
     if (!title.trim() || !description.trim() || !imageUrl.trim() || !cookingTime.trim() || !ingredients.trim()) {
-      Alert.alert('Faltan datos', 'Completa todos los campos antes de publicar la receta.')
+      Alert.alert(t('recipeCreate.alertMissingTitle'), t('recipeCreate.alertMissingMessage'))
       return
     }
 
     if (!isValidUrl(imageUrl.trim())) {
-      Alert.alert('Imagen no válida', 'Introduce una URL de imagen que empiece por http:// o https://.')
+      Alert.alert(t('recipeCreate.alertImageTitle'), t('recipeCreate.alertImageMessage'))
       return
     }
 
     if (!Number.isInteger(parsedCookingTime) || parsedCookingTime <= 0) {
-      Alert.alert('Tiempo no válido', 'El tiempo de cocción debe ser un número entero positivo.')
+      Alert.alert(t('recipeCreate.alertTimeTitle'), t('recipeCreate.alertTimeMessage'))
       return
     }
 
     if (!token) {
-      Alert.alert('Sesión no disponible', 'Inicia sesión de nuevo para crear una receta.')
+      Alert.alert(t('recipeCreate.alertSessionTitle'), t('recipeCreate.alertSessionMessage'))
       return
     }
 
@@ -115,10 +118,10 @@ export default function CreateRecipeScreen() {
         recipeCategory: category,
       })
 
-      Alert.alert('Receta creada', 'La receta se ha publicado correctamente.')
+      Alert.alert(t('recipeCreate.alertSuccessTitle'), t('recipeCreate.alertSuccessMessage'))
       router.back()
     } catch {
-      Alert.alert('No se pudo crear', 'Revisa los datos e inténtalo de nuevo.')
+      Alert.alert(t('recipeCreate.alertErrorTitle'), t('recipeCreate.alertErrorMessage'))
     } finally {
       setLoading(false)
     }
@@ -142,13 +145,13 @@ export default function CreateRecipeScreen() {
       >
         <View className="flex-row items-center gap-5">
           <Pressable
-            accessibilityLabel="Volver"
+            accessibilityLabel={t('common.back')}
             className="h-11 w-11 items-center justify-center rounded-3xl"
             onPress={() => router.back()}
           >
             <Ionicons name="arrow-back" size={28} color={colors.greenDark} />
           </Pressable>
-          <Text className="font-poppins-bold text-dish-green-dark text-xl">Crear receta</Text>
+          <Text className="font-poppins-bold text-dish-green-dark text-xl">{t('recipeCreate.header')}</Text>
         </View>
 
         <View className="gap-4" style={{ paddingTop: isShortPhone ? 20 : 48 }}>
@@ -156,25 +159,25 @@ export default function CreateRecipeScreen() {
             className={`${isSmallPhone ? 'text-4xl' : 'text-5xl'} font-poppins-bold text-dish-green-dark`}
             style={{ lineHeight: isSmallPhone ? 44 : 56 }}
           >
-            Nueva receta
+            {t('recipeCreate.title')}
           </Text>
           <Text className="font-poppins-medium text-dish-muted max-w-80 text-lg" style={{ lineHeight: isSmallPhone ? 25 : 28 }}>
-            Comparte tu creación culinaria con la comunidad DishCover. Completa los datos para publicar tu plato.
+            {t('recipeCreate.subtitle')}
           </Text>
         </View>
 
         <View style={{ gap: isShortPhone ? 22 : 28 }}>
-          <RecipeField label="Título de la receta" placeholder="Título" value={title} onChangeText={setTitle} />
+          <RecipeField label={t('recipeCreate.titleLabel')} placeholder={t('recipeCreate.titlePlaceholder')} value={title} onChangeText={setTitle} />
           <RecipeField
-            label="Descripción de la receta"
+            label={t('recipeCreate.descriptionLabel')}
             multiline
-            placeholder="Descripción"
+            placeholder={t('recipeCreate.descriptionPlaceholder')}
             value={description}
             onChangeText={setDescription}
           />
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">Imagen de la receta</Text>
+            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.imageLabel')}</Text>
             <View className="bg-dish-green-light flex-row items-center gap-3 rounded-4xl px-7" style={{ minHeight: isShortPhone ? 64 : 72 }}>
               <Ionicons name="image-outline" size={22} color="rgba(0, 109, 29, 0.64)" />
               <TextInput
@@ -182,7 +185,7 @@ export default function CreateRecipeScreen() {
                 className="font-poppins-medium text-dish-green-dark flex-1 text-lg"
                 keyboardType="url"
                 onChangeText={setImageUrl}
-                placeholder="https://ejemplo.com/imagen.jpg"
+                placeholder={t('recipeCreate.imagePlaceholder')}
                 placeholderTextColor="#FFFFF8"
                 value={imageUrl}
               />
@@ -190,7 +193,7 @@ export default function CreateRecipeScreen() {
           </View>
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">Categoría de la receta</Text>
+            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.categoryLabel')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
               {categories.map((item) => {
                 const active = item === category
@@ -203,7 +206,7 @@ export default function CreateRecipeScreen() {
                     onPress={() => setCategory(item)}
                   >
                     <Text className={`font-poppins-bold text-base ${active ? 'text-white' : 'text-dish-text'}`}>
-                      {item}
+                      {t(categoryTranslationKeys[item])}
                     </Text>
                   </Pressable>
                 )
@@ -212,13 +215,13 @@ export default function CreateRecipeScreen() {
           </View>
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">Tiempo de cocción</Text>
+            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.cookingTimeLabel')}</Text>
             <View className={`${stackCookingTime ? 'gap-4' : 'flex-row gap-5'}`}>
               <TextInput
                 className="font-poppins-medium bg-dish-green-light text-dish-green-dark rounded-4xl px-7 text-lg"
                 keyboardType="numeric"
                 onChangeText={setCookingTime}
-                placeholder="Minutos"
+                placeholder={t('recipeCreate.minutesPlaceholder')}
                 placeholderTextColor="#FFFFF8"
                 style={{ minHeight: isShortPhone ? 64 : 80, flex: stackCookingTime ? undefined : 1 }}
                 value={cookingTime}
@@ -228,13 +231,13 @@ export default function CreateRecipeScreen() {
                 style={{ minHeight: isShortPhone ? 64 : 80, flex: stackCookingTime ? undefined : 1 }}
               >
                 <Ionicons name="timer-outline" size={27} color="#9B5B10" />
-                <Text className="font-poppins-bold text-dish-text mt-1 text-xs uppercase">Duración</Text>
+                <Text className="font-poppins-bold text-dish-text mt-1 text-xs uppercase">{t('recipeCreate.durationLabel')}</Text>
               </View>
             </View>
           </View>
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">Raciones por persona</Text>
+            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.servingsLabel')}</Text>
             <View className="bg-dish-green-light items-center rounded-4xl px-7" style={{ paddingVertical: isShortPhone ? 22 : 32 }}>
               <Text className={`${isSmallPhone ? 'text-6xl' : 'text-7xl'} font-poppins-bold text-[#063A12]`} style={{ lineHeight: isSmallPhone ? 60 : 72 }}>
                 {servings}
@@ -254,20 +257,20 @@ export default function CreateRecipeScreen() {
                 </Pressable>
               </View>
               <Text className="font-poppins-bold text-dish-green-dark mt-5 text-xs tracking-wide uppercase">
-                Ajustar número de personas
+                {t('recipeCreate.adjustPeople')}
               </Text>
             </View>
           </View>
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">Ingredientes necesarios</Text>
+            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.ingredientsLabel')}</Text>
             <View className="bg-dish-green-light flex-row items-center gap-3 rounded-4xl px-7" style={{ minHeight: isShortPhone ? 64 : 72 }}>
               <TextInput
                 ref={ingredientsRef}
                 className="font-poppins-medium text-dish-green-dark flex-1 text-lg"
                 multiline
                 onChangeText={setIngredients}
-                placeholder="Ingredientes necesarios"
+                placeholder={t('recipeCreate.ingredientsPlaceholder')}
                 placeholderTextColor="#FFFFF8"
                 style={{ paddingVertical: 18, textAlignVertical: 'center' }}
                 value={ingredients}
@@ -309,7 +312,7 @@ export default function CreateRecipeScreen() {
           >
             {loading ? <ActivityIndicator color="#FFFFF8" /> : null}
             <Text className="font-poppins-bold text-2xl text-white">
-              {loading ? 'Publicando...' : 'Publicar receta'}
+              {loading ? t('recipeCreate.publishing') : t('recipeCreate.publish')}
             </Text>
             {!loading ? <Ionicons name="send-outline" size={25} color="#FFFFF8" /> : null}
           </LinearGradient>

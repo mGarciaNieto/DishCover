@@ -11,8 +11,10 @@ import { router, useLocalSearchParams } from 'expo-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Recipe, recipes } from '@/data/demo'
+import { categoryTranslationKeys } from '@/constants/translations'
 import { colors, shadows } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext'
+import { useLanguage } from '@/context/LanguageContext'
 import {
   createRecipeComment,
   createRecipeReport,
@@ -29,6 +31,7 @@ import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
 export default function RecipeDetailsScreen() {
   const { contentWidthStyle, isShortPhone, isSmallPhone, isTablet, screenPaddingStyle } = useResponsiveLayout()
+  const { t } = useLanguage()
   const { id } = useLocalSearchParams<{ id: string }>()
   const recipeId = useMemo(() => Number(Array.isArray(id) ? id[0] : id), [id])
   const fallbackRecipe = useMemo(() => recipes.find((recipe) => recipe.id === recipeId) ?? null, [recipeId])
@@ -42,6 +45,9 @@ export default function RecipeDetailsScreen() {
   const [editingCommentText, setEditingCommentText] = useState('')
   const [reportOpen, setReportOpen] = useState(false)
   const [reportText, setReportText] = useState('')
+  const recipeCategoryKey = recipe ? categoryTranslationKeys[recipe.category] : undefined
+  const recipeCategoryLabel = recipe ? (recipeCategoryKey ? t(recipeCategoryKey) : recipe.category) : ''
+  const servingLabel = recipe?.servings === 1 ? t('unit.serving') : t('unit.servings')
 
   const loadComments = useCallback(async () => {
     if (!token || !Number.isFinite(recipeId)) {
@@ -109,7 +115,7 @@ export default function RecipeDetailsScreen() {
       return true
     }
 
-    Alert.alert('Sesión necesaria', 'Inicia sesión para utilizar esta funcionalidad.')
+    Alert.alert(t('recipeDetails.alertSessionTitle'), t('recipeDetails.alertSessionMessage'))
     return false
   }
 
@@ -133,7 +139,7 @@ export default function RecipeDetailsScreen() {
         setIsFavorite(favoriteIds.includes(recipeId))
       } catch {
         setIsFavorite(!nextFavorite)
-        Alert.alert('No se pudo actualizar', 'Inténtalo de nuevo dentro de unos segundos.')
+        Alert.alert(t('recipeDetails.alertFavoriteTitle'), t('recipeDetails.alertFavoriteMessage'))
       }
     }
   }
@@ -145,7 +151,7 @@ export default function RecipeDetailsScreen() {
 
     const cleanComment = newComment.trim()
     if (cleanComment.length < 2) {
-      Alert.alert('Comentario vacío', 'Escribe un comentario antes de publicarlo.')
+      Alert.alert(t('recipeDetails.alertCommentEmptyTitle'), t('recipeDetails.alertCommentEmptyMessage'))
       return
     }
 
@@ -154,7 +160,7 @@ export default function RecipeDetailsScreen() {
       setNewComment('')
       await loadComments()
     } catch {
-      Alert.alert('No se pudo comentar', 'Revisa la conexión con el backend e inténtalo de nuevo.')
+      Alert.alert(t('recipeDetails.alertCommentCreateTitle'), t('recipeDetails.alertCommentCreateMessage'))
     }
   }
 
@@ -165,7 +171,7 @@ export default function RecipeDetailsScreen() {
 
     const cleanComment = editingCommentText.trim()
     if (cleanComment.length < 2) {
-      Alert.alert('Comentario vacío', 'El comentario editado no puede estar vacío.')
+      Alert.alert(t('recipeDetails.alertCommentEmptyTitle'), t('recipeDetails.alertCommentEmptyEditMessage'))
       return
     }
 
@@ -175,7 +181,7 @@ export default function RecipeDetailsScreen() {
       setEditingCommentText('')
       await loadComments()
     } catch {
-      Alert.alert('No se pudo editar', 'Solo puedes modificar tus propios comentarios.')
+      Alert.alert(t('recipeDetails.alertCommentEditTitle'), t('recipeDetails.alertCommentEditMessage'))
     }
   }
 
@@ -184,17 +190,17 @@ export default function RecipeDetailsScreen() {
       return
     }
 
-    Alert.alert('Eliminar comentario', '¿Quieres eliminar este comentario?', [
-      { text: 'Cancelar', style: 'cancel' },
+    Alert.alert(t('recipeDetails.deleteCommentTitle'), t('recipeDetails.deleteCommentMessage'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Eliminar',
+        text: t('common.delete'),
         style: 'destructive',
         onPress: async () => {
           try {
             await deleteRecipeComment(token!, commentId)
             await loadComments()
           } catch {
-            Alert.alert('No se pudo eliminar', 'Solo puedes eliminar tus propios comentarios.')
+            Alert.alert(t('recipeDetails.alertCommentDeleteTitle'), t('recipeDetails.alertCommentDeleteMessage'))
           }
         },
       },
@@ -208,7 +214,7 @@ export default function RecipeDetailsScreen() {
 
     const cleanReport = reportText.trim()
     if (cleanReport.length < 4) {
-      Alert.alert('Reporte incompleto', 'Describe brevemente el problema de la receta.')
+      Alert.alert(t('recipeDetails.alertReportIncompleteTitle'), t('recipeDetails.alertReportIncompleteMessage'))
       return
     }
 
@@ -216,9 +222,9 @@ export default function RecipeDetailsScreen() {
       await createRecipeReport(token!, recipeId, cleanReport)
       setReportText('')
       setReportOpen(false)
-      Alert.alert('Reporte enviado', 'Gracias por ayudar a revisar el contenido.')
+      Alert.alert(t('recipeDetails.alertReportSuccessTitle'), t('recipeDetails.alertReportSuccessMessage'))
     } catch {
-      Alert.alert('No se pudo reportar', 'Revisa la conexión con el backend e inténtalo de nuevo.')
+      Alert.alert(t('recipeDetails.alertReportErrorTitle'), t('recipeDetails.alertReportErrorMessage'))
     }
   }
 
@@ -227,7 +233,7 @@ export default function RecipeDetailsScreen() {
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={colors.green} />
-          <Text className="mt-4 text-base font-bold text-dish-muted">Cargando receta...</Text>
+          <Text className="mt-4 text-base font-bold text-dish-muted">{t('recipeDetails.loading')}</Text>
         </View>
       </SafeAreaView>
     )
@@ -237,9 +243,9 @@ export default function RecipeDetailsScreen() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-center text-2xl font-black text-dish-text">No se pudo cargar la receta.</Text>
+          <Text className="text-center text-2xl font-black text-dish-text">{t('recipeDetails.unavailable')}</Text>
           <Pressable className="mt-8 min-h-14 flex-row items-center justify-center rounded-3xl bg-dish-green px-6" onPress={() => router.back()}>
-            <Text className="text-lg font-extrabold text-white">Volver</Text>
+            <Text className="text-lg font-extrabold text-white">{t('common.back')}</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -278,65 +284,65 @@ export default function RecipeDetailsScreen() {
               <Text className={`${isSmallPhone ? 'text-3xl' : 'text-4xl'} font-black text-dish-text`} style={{ lineHeight: isSmallPhone ? 34 : 40 }}>
                 {recipe.title}
               </Text>
-              <Text className="mt-3 self-start rounded-3xl bg-dish-green-light px-4 py-2 text-xs font-extrabold uppercase text-dish-green-dark">{recipe.category}</Text>
+              <Text className="mt-3 self-start rounded-3xl bg-dish-green-light px-4 py-2 text-xs font-extrabold uppercase text-dish-green-dark">{recipeCategoryLabel}</Text>
             </View>
           </View>
 
           <View className="mt-6 flex-row gap-3">
             <View className="min-h-16 flex-1 flex-row items-center justify-center gap-2 rounded-3xl bg-dish-surface">
               <Ionicons name="time-outline" size={20} color={colors.green} />
-              <Text adjustsFontSizeToFit numberOfLines={1} className="text-base font-extrabold text-dish-muted">{recipe.cookingTime} min</Text>
+              <Text adjustsFontSizeToFit numberOfLines={1} className="text-base font-extrabold text-dish-muted">{recipe.cookingTime} {t('unit.minute')}</Text>
             </View>
             <View className="min-h-16 flex-1 flex-row items-center justify-center gap-2 rounded-3xl bg-dish-surface">
               <Ionicons name="people-outline" size={20} color={colors.green} />
-              <Text adjustsFontSizeToFit numberOfLines={1} className="text-base font-extrabold text-dish-muted">{recipe.servings} ración</Text>
+              <Text adjustsFontSizeToFit numberOfLines={1} className="text-base font-extrabold text-dish-muted">{recipe.servings} {servingLabel}</Text>
             </View>
           </View>
 
           <Text className="mt-8 text-lg leading-7 text-dish-muted">{recipe.description}</Text>
 
           <View className="mt-8 rounded-3xl bg-dish-surface p-5">
-            <Text className="text-2xl font-black text-dish-text">Ingredientes</Text>
-            <Text className="mt-3 text-base leading-7 text-dish-muted">{recipe.ingredients ?? 'Ingredientes pendientes de completar.'}</Text>
+            <Text className="text-2xl font-black text-dish-text">{t('recipeDetails.ingredientsTitle')}</Text>
+            <Text className="mt-3 text-base leading-7 text-dish-muted">{recipe.ingredients ?? t('recipeDetails.ingredientsFallback')}</Text>
           </View>
 
           {reportOpen ? (
             <View className="mt-6 rounded-3xl bg-dish-muted-surface p-5">
-              <Text className="text-xl font-black text-dish-text">Reportar receta</Text>
+              <Text className="text-xl font-black text-dish-text">{t('recipeDetails.reportTitle')}</Text>
               <TextInput
                 value={reportText}
                 onChangeText={setReportText}
-                placeholder="Describe el problema..."
+                placeholder={t('recipeDetails.reportPlaceholder')}
                 placeholderTextColor="#7B8076"
                 multiline
                 className="mt-4 min-h-24 rounded-3xl bg-dish-surface px-4 py-3 text-base leading-6 text-dish-text"
                 textAlignVertical="top"
               />
               <Pressable className="mt-4 min-h-14 items-center justify-center rounded-3xl bg-dish-green" onPress={handleCreateReport}>
-                <Text className="text-base font-extrabold text-white">Enviar reporte</Text>
+                <Text className="text-base font-extrabold text-white">{t('recipeDetails.reportSubmit')}</Text>
               </Pressable>
             </View>
           ) : null}
 
           <View className="mt-9">
-            <Text className="text-2xl font-black text-dish-text">Comentarios</Text>
+            <Text className="text-2xl font-black text-dish-text">{t('recipeDetails.commentsTitle')}</Text>
             <TextInput
               value={newComment}
               onChangeText={setNewComment}
-              placeholder="Escribe un comentario..."
+              placeholder={t('recipeDetails.commentPlaceholder')}
               placeholderTextColor="#7B8076"
               multiline
               className="mt-4 min-h-24 rounded-3xl bg-dish-surface px-4 py-3 text-base leading-6 text-dish-text"
               textAlignVertical="top"
             />
             <Pressable className="mt-4 min-h-14 items-center justify-center rounded-3xl bg-dish-green" onPress={handleCreateComment}>
-              <Text className="text-base font-extrabold text-white">Publicar comentario</Text>
+              <Text className="text-base font-extrabold text-white">{t('recipeDetails.commentSubmit')}</Text>
             </Pressable>
           </View>
 
           <View className="mt-6 gap-4">
             {comments.length === 0 ? (
-              <Text className="rounded-3xl bg-dish-muted-surface p-5 text-base font-bold leading-6 text-dish-muted">Todavía no hay comentarios para esta receta.</Text>
+              <Text className="rounded-3xl bg-dish-muted-surface p-5 text-base font-bold leading-6 text-dish-muted">{t('recipeDetails.noComments')}</Text>
             ) : (
               comments.map((comment) => {
                 const isEditing = editingCommentId === comment.id
@@ -355,7 +361,7 @@ export default function RecipeDetailsScreen() {
                         />
                         <View className="mt-4 flex-row gap-3">
                           <Pressable className="min-h-12 flex-1 items-center justify-center rounded-3xl bg-dish-green" onPress={handleSaveEditedComment}>
-                            <Text className="font-extrabold text-white">Guardar</Text>
+                            <Text className="font-extrabold text-white">{t('common.save')}</Text>
                           </Pressable>
                           <Pressable
                             className="min-h-12 flex-1 items-center justify-center rounded-3xl bg-dish-muted-surface"
@@ -364,7 +370,7 @@ export default function RecipeDetailsScreen() {
                               setEditingCommentText('')
                             }}
                           >
-                            <Text className="font-extrabold text-dish-text">Cancelar</Text>
+                            <Text className="font-extrabold text-dish-text">{t('common.cancel')}</Text>
                           </Pressable>
                         </View>
                       </>
@@ -381,10 +387,10 @@ export default function RecipeDetailsScreen() {
                                 setEditingCommentText(comment.comment)
                               }}
                             >
-                              <Text className="font-extrabold text-dish-text">Editar</Text>
+                              <Text className="font-extrabold text-dish-text">{t('common.edit')}</Text>
                             </Pressable>
                             <Pressable className="min-h-11 flex-1 items-center justify-center rounded-3xl bg-dish-muted-surface" onPress={() => handleDeleteComment(comment.id)}>
-                              <Text className="font-extrabold text-dish-danger">Eliminar</Text>
+                              <Text className="font-extrabold text-dish-danger">{t('common.delete')}</Text>
                             </Pressable>
                           </View>
                         ) : null}
