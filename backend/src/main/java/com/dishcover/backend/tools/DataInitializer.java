@@ -109,15 +109,32 @@ public class DataInitializer {
             }
         }
 
-        if(eventRepository.count()==0) {
-            // Los eventos base permiten probar la sección Eventos sin crear datos manuales.
-            InputStream inputStream = resourceLoader.getResource("classpath:eventos.json").getInputStream();
+        // Los eventos base se sincronizan por título para mantener fechas y textos actualizados.
+        InputStream inputStream = resourceLoader.getResource("classpath:eventos.json").getInputStream();
 
-            ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
 
-            List<EventModel> events = Arrays.asList(mapper.readValue(inputStream, EventModel[].class));
-            eventRepository.saveAll(events);
+        List<EventModel> events = Arrays.asList(mapper.readValue(inputStream, EventModel[].class));
+        for (EventModel event : events) {
+            event.setEventCategory(resolveEventCategory(event));
+
+            eventRepository.findByTitle(event.getTitle()).ifPresentOrElse(existingEvent -> {
+                existingEvent.setDate(event.getDate());
+                existingEvent.setDuration(event.getDuration());
+                existingEvent.setDescription(event.getDescription());
+                existingEvent.setEventCategory(event.getEventCategory());
+                eventRepository.save(existingEvent);
+            }, () -> eventRepository.save(event));
         }
 
+    }
+
+    private EventCategoryModel resolveEventCategory(EventModel event) {
+        if (event.getEventCategory() == null || event.getEventCategory().getCategory() == null) {
+            return event.getEventCategory();
+        }
+
+        return eventCategoryRepository.findByCategory(event.getEventCategory().getCategory())
+            .orElse(event.getEventCategory());
     }
 }
