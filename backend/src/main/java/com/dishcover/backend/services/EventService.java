@@ -42,6 +42,7 @@ public class EventService {
         event.setDescription(request.getDescription());
         event.setDuration(request.getDuration());
         event.setEventCategory(category);
+        event.setImageUrl(request.getImageUrl());
         event.setTitle(request.getTitle());
 
         return eventRepository.save(event);
@@ -78,6 +79,7 @@ public class EventService {
             event.setDescription(request.getDescription());
             event.setDuration(request.getDuration());
             event.setEventCategory(category);
+            event.setImageUrl(request.getImageUrl());
             event.setTitle(request.getTitle());
 
             eventRepository.save(event);
@@ -129,7 +131,6 @@ public class EventService {
         List<Long> eventsRegisteredId = new ArrayList<>();
         user.getEvents().forEach( it ->
             {
-                assert false;
                 eventsRegisteredId.add(it.getId());
             }
         );

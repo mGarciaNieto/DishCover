@@ -90,7 +90,7 @@ public class RecipeService {
             recipe.setTitle(request.getTitle());
             recipe.setDescription(request.getDescription());
             recipe.setCookingTime(request.getCookingTime());
-            recipe.setImageUrl(recipe.getImageUrl());
+            recipe.setImageUrl(request.getImageUrl());
             recipe.setNumPersons(request.getNumPersons());
             recipe.setIngredients(request.getIngredients());
             recipe.setRecipeCategory(category);

@@ -31,6 +31,9 @@ public class EventModel {
     @Column(length = 10, nullable = false)
     private String date;
 
+    @Column(length = 2048)
+    private String imageUrl;
+
     @Column(nullable = false)
     private Integer duration;
 

@@ -12,6 +12,7 @@ public class EventRequest {
 
     private String title;
     private String date;
+    private String imageUrl;
     private Integer duration;
     private String description;
     private String eventCategory;

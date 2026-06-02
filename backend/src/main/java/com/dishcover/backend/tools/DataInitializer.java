@@ -123,6 +123,7 @@ public class DataInitializer {
                 existingEvent.setDuration(event.getDuration());
                 existingEvent.setDescription(event.getDescription());
                 existingEvent.setEventCategory(event.getEventCategory());
+                existingEvent.setImageUrl(event.getImageUrl());
                 eventRepository.save(existingEvent);
             }, () -> eventRepository.save(event));
         }
