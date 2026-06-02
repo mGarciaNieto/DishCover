@@ -41,6 +41,12 @@ describe('CreateRecipeScreen', () => {
     expect(getByPlaceholderText('https://ejemplo.com/imagen.jpg')).toBeTruthy()
     expect(getByPlaceholderText('Minutos')).toBeTruthy()
     expect(getByPlaceholderText('Ingredientes necesarios')).toBeTruthy()
+    expect(getByText('Pizza')).toBeTruthy()
+    expect(getByText('Ensalada')).toBeTruthy()
+    expect(getByText('Postre')).toBeTruthy()
+    expect(getByText('Bebidas')).toBeTruthy()
+    expect(getByText('Desayuno')).toBeTruthy()
+    expect(getByText('Sopa')).toBeTruthy()
   })
 
   test('muestra alerta si faltan datos obligatorios', () => {

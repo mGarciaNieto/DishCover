@@ -60,6 +60,17 @@ type ApiRecipe = {
   }
 }
 
+export type EditableRecipe = {
+  id: number
+  title: string
+  imageUrl: string
+  description: string
+  ingredients: string
+  cookingTime: number
+  numPersons: number
+  recipeCategory: string
+}
+
 export type RecipeComment = {
   id: number
   author: string
@@ -117,6 +128,19 @@ function mapApiRecipe(recipe: ApiRecipe): Recipe {
   }
 }
 
+function mapEditableRecipe(recipe: ApiRecipe): EditableRecipe {
+  return {
+    id: recipe.id,
+    title: recipe.title ?? '',
+    imageUrl: recipe.imageUrl ?? '',
+    description: recipe.description ?? '',
+    ingredients: recipe.ingredients ?? '',
+    cookingTime: recipe.cookingTime ?? 0,
+    numPersons: recipe.numPersons ?? 1,
+    recipeCategory: recipe.categoryName ?? recipe.recipeCategory?.category ?? 'Vegano',
+  }
+}
+
 export async function loginUser(username: string, password: string) {
   return request<LoginResponse>('/auth/login', {
     method: 'POST',
@@ -145,6 +169,14 @@ export async function fetchRecipes(token: string): Promise<Recipe[]> {
   return recipes.map(mapApiRecipe)
 }
 
+export async function fetchMyRecipes(token: string): Promise<Recipe[]> {
+  const recipes = await request<ApiRecipe[]>('/api/recipes', {
+    headers: authHeaders(token),
+  })
+
+  return recipes.map(mapApiRecipe)
+}
+
 export async function fetchRecipeById(token: string, id: number): Promise<Recipe> {
   const recipe = await request<ApiRecipe>(`/api/recipe/${id}`, {
     headers: authHeaders(token),
@@ -153,9 +185,25 @@ export async function fetchRecipeById(token: string, id: number): Promise<Recipe
   return mapApiRecipe(recipe)
 }
 
+export async function fetchEditableRecipeById(token: string, id: number): Promise<EditableRecipe> {
+  const recipe = await request<ApiRecipe>(`/api/recipe/${id}`, {
+    headers: authHeaders(token),
+  })
+
+  return mapEditableRecipe(recipe)
+}
+
 export async function createRecipe(token: string, payload: RecipePayload) {
   await request<unknown>('/api/recipe', {
     method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function updateRecipe(token: string, id: number, payload: RecipePayload) {
+  await request<unknown>(`/api/recipe/${id}`, {
+    method: 'PUT',
     headers: authHeaders(token),
     body: JSON.stringify(payload),
   })

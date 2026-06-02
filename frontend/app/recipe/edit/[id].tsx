@@ -1,14 +1,14 @@
 /**
- * Pantalla de creación de recetas.
- * Permite registrar una nueva receta validando los datos antes de enviarlos al backend.
+ * Pantalla de edición de una receta concreta.
+ * Carga los datos actuales de la receta y permite guardar los cambios en el backend.
  *
- * @returns {JSX.Element} Formulario de alta de receta.
+ * @returns {JSX.Element} Formulario de edición de receta.
  * @author Manuel García Nieto
  */
 import { Ionicons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
-import { router } from 'expo-router'
-import { useRef, useState } from 'react'
+import { router, useLocalSearchParams } from 'expo-router'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { recipeCategories, type RecipeCategory } from '@/constants/recipeCategories'
@@ -17,11 +17,11 @@ import { shadows } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext'
 import { useLanguage } from '@/context/LanguageContext'
 import { useTheme } from '@/context/ThemeContext'
-import { createRecipe } from '@/services/api'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
+import { fetchEditableRecipeById, updateRecipe } from '@/services/api'
 
 function isValidUrl(value: string) {
-  // Validación simple para evitar enviar imágenes con URLs claramente incorrectas.
+  // Misma validación ligera que se aplica al crear receta.
   return /^https?:\/\/[^\s$.?#].[^\s]*$/.test(value)
 }
 
@@ -68,7 +68,8 @@ function RecipeField({
   )
 }
 
-export default function CreateRecipeScreen() {
+export default function EditRecipeDetailScreen() {
+  const { id } = useLocalSearchParams<{ id?: string }>()
   const { contentWidthStyle, horizontalPadding, isShortPhone, isSmallPhone, width } = useResponsiveLayout()
   const { token } = useAuth()
   const { t } = useLanguage()
@@ -81,40 +82,73 @@ export default function CreateRecipeScreen() {
   const [cookingTime, setCookingTime] = useState('')
   const [servings, setServings] = useState(4)
   const [ingredients, setIngredients] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const recipeId = Number(id)
   const stackCookingTime = width < 380
-  const publishButtonHeight = isShortPhone ? 58 : 68
+  const saveButtonHeight = isShortPhone ? 64 : 76
   const activeCategoryBackground = isDarkMode ? colors.greenLight : colors.greenDark
   const activeCategoryText = isDarkMode ? '#0B3213' : '#FFFFFF'
 
-  const handleCreateRecipe = async () => {
-    // El backend espera cookingTime como número entero, no como texto.
+  const loadRecipe = useCallback(async () => {
+    if (!token || !Number.isInteger(recipeId)) {
+      setError(t('editRecipe.alertSessionMessage'))
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const recipe = await fetchEditableRecipeById(token, recipeId)
+      const nextCategory = recipe.recipeCategory as RecipeCategory
+
+      setTitle(recipe.title)
+      setDescription(recipe.description)
+      setImageUrl(recipe.imageUrl)
+      setCategory(recipeCategories.includes(nextCategory) ? nextCategory : 'Vegano')
+      setCookingTime(recipe.cookingTime ? String(recipe.cookingTime) : '')
+      setServings(recipe.numPersons || 1)
+      setIngredients(recipe.ingredients)
+    } catch {
+      setError(t('editRecipe.detailError'))
+    } finally {
+      setLoading(false)
+    }
+  }, [recipeId, t, token])
+
+  useEffect(() => {
+    loadRecipe()
+  }, [loadRecipe])
+
+  const handleUpdateRecipe = async () => {
     const parsedCookingTime = Number(cookingTime)
 
     if (!title.trim() || !description.trim() || !imageUrl.trim() || !cookingTime.trim() || !ingredients.trim()) {
-      Alert.alert(t('recipeCreate.alertMissingTitle'), t('recipeCreate.alertMissingMessage'))
+      Alert.alert(t('editRecipe.alertMissingTitle'), t('editRecipe.alertMissingMessage'))
       return
     }
 
     if (!isValidUrl(imageUrl.trim())) {
-      Alert.alert(t('recipeCreate.alertImageTitle'), t('recipeCreate.alertImageMessage'))
+      Alert.alert(t('editRecipe.alertImageTitle'), t('editRecipe.alertImageMessage'))
       return
     }
 
     if (!Number.isInteger(parsedCookingTime) || parsedCookingTime <= 0) {
-      Alert.alert(t('recipeCreate.alertTimeTitle'), t('recipeCreate.alertTimeMessage'))
+      Alert.alert(t('editRecipe.alertTimeTitle'), t('editRecipe.alertTimeMessage'))
       return
     }
 
-    if (!token) {
-      Alert.alert(t('recipeCreate.alertSessionTitle'), t('recipeCreate.alertSessionMessage'))
+    if (!token || !Number.isInteger(recipeId)) {
+      Alert.alert(t('editRecipe.alertSessionTitle'), t('editRecipe.alertSessionMessage'))
       return
     }
 
     try {
-      setLoading(true)
-      // El payload respeta los nombres del DTO RecipeRequest de Spring Boot.
-      await createRecipe(token, {
+      setSaving(true)
+      await updateRecipe(token, recipeId, {
         title: title.trim(),
         imageUrl: imageUrl.trim(),
         description: description.trim(),
@@ -124,13 +158,37 @@ export default function CreateRecipeScreen() {
         recipeCategory: category,
       })
 
-      Alert.alert(t('recipeCreate.alertSuccessTitle'), t('recipeCreate.alertSuccessMessage'))
+      Alert.alert(t('editRecipe.alertSuccessTitle'), t('editRecipe.alertSuccessMessage'))
       router.back()
     } catch {
-      Alert.alert(t('recipeCreate.alertErrorTitle'), t('recipeCreate.alertErrorMessage'))
+      Alert.alert(t('editRecipe.alertErrorTitle'), t('editRecipe.alertErrorMessage'))
     } finally {
-      setLoading(false)
+      setSaving(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.surfaceWarm }}>
+        <View className="flex-1 items-center justify-center px-8">
+          <ActivityIndicator size="large" color={colors.green} />
+          <Text className="font-poppins-bold mt-4 text-base" style={{ color: colors.mutedText }}>{t('editRecipe.detailLoading')}</Text>
+        </View>
+      </SafeAreaView>
+    )
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.surfaceWarm }}>
+        <View className="flex-1 justify-center px-8">
+          <Pressable className="mb-6 h-12 w-12 items-center justify-center rounded-3xl" onPress={() => router.back()} style={[shadows.soft, { backgroundColor: colors.surface }]}>
+            <Ionicons name="chevron-back" size={25} color={colors.text} />
+          </Pressable>
+          <Text className="font-poppins-bold rounded-3xl p-5 text-base leading-6" style={{ backgroundColor: colors.mutedSurface, color: colors.mutedText }}>{error}</Text>
+        </View>
+      </SafeAreaView>
+    )
   }
 
   return (
@@ -157,7 +215,7 @@ export default function CreateRecipeScreen() {
           >
             <Ionicons name="arrow-back" size={28} color={colors.greenDark} />
           </Pressable>
-          <Text className="font-poppins-bold text-xl" style={{ color: colors.greenDark }}>{t('recipeCreate.header')}</Text>
+          <Text className="font-poppins-bold text-xl" style={{ color: colors.greenDark }}>{t('editRecipe.detailHeader')}</Text>
         </View>
 
         <View className="gap-4" style={{ paddingTop: isShortPhone ? 20 : 48 }}>
@@ -165,10 +223,10 @@ export default function CreateRecipeScreen() {
             className={`${isSmallPhone ? 'text-4xl' : 'text-5xl'} font-poppins-bold`}
             style={{ color: colors.greenDark, lineHeight: isSmallPhone ? 44 : 56 }}
           >
-            {t('recipeCreate.title')}
+            {t('editRecipe.detailTitle')}
           </Text>
           <Text className="font-poppins-medium max-w-80 text-lg" style={{ color: colors.mutedText, lineHeight: isSmallPhone ? 25 : 28 }}>
-            {t('recipeCreate.subtitle')}
+            {t('editRecipe.detailSubtitle')}
           </Text>
         </View>
 
@@ -256,16 +314,10 @@ export default function CreateRecipeScreen() {
                 {servings}
               </Text>
               <View className="mt-3 flex-row gap-5">
-                <Pressable
-                  className="h-12 w-12 items-center justify-center rounded-3xl bg-[#063A12]"
-                  onPress={() => setServings((current) => Math.max(1, current - 1))}
-                >
+                <Pressable className="h-12 w-12 items-center justify-center rounded-3xl bg-[#063A12]" onPress={() => setServings((current) => Math.max(1, current - 1))}>
                   <Ionicons name="remove" size={24} color="#FFFFF8" />
                 </Pressable>
-                <Pressable
-                  className="h-12 w-12 items-center justify-center rounded-3xl bg-[#063A12]"
-                  onPress={() => setServings((current) => Math.min(12, current + 1))}
-                >
+                <Pressable className="h-12 w-12 items-center justify-center rounded-3xl bg-[#063A12]" onPress={() => setServings((current) => Math.min(12, current + 1))}>
                   <Ionicons name="add" size={24} color="#FFFFF8" />
                 </Pressable>
               </View>
@@ -288,11 +340,7 @@ export default function CreateRecipeScreen() {
                 style={{ color: '#0B3213', paddingVertical: 18, textAlignVertical: 'center' }}
                 value={ingredients}
               />
-              <Pressable
-                className="h-12 w-12 items-center justify-center rounded-3xl"
-                style={{ backgroundColor: '#063A12' }}
-                onPress={() => ingredientsRef.current?.focus()}
-              >
+              <Pressable className="h-12 w-12 items-center justify-center rounded-3xl" style={{ backgroundColor: '#063A12' }} onPress={() => ingredientsRef.current?.focus()}>
                 <Ionicons name="add-circle-outline" size={28} color="#FFFFF8" />
               </Pressable>
             </View>
@@ -301,13 +349,13 @@ export default function CreateRecipeScreen() {
 
         <Pressable
           className="mt-5 overflow-hidden rounded-4xl"
-          disabled={loading}
-          onPress={handleCreateRecipe}
+          disabled={saving}
+          onPress={handleUpdateRecipe}
           style={({ pressed }) => [
             shadows.soft,
-            { minHeight: publishButtonHeight, width: '100%' },
-            loading && { opacity: 0.58 },
-            pressed && !loading && { opacity: 0.86 },
+            { minHeight: saveButtonHeight, width: '100%' },
+            saving && { opacity: 0.58 },
+            pressed && !saving && { opacity: 0.86 },
           ]}
         >
           <LinearGradient
@@ -319,16 +367,16 @@ export default function CreateRecipeScreen() {
               flexDirection: 'row',
               gap: 12,
               justifyContent: 'center',
-              minHeight: publishButtonHeight,
+              minHeight: saveButtonHeight,
               paddingVertical: isShortPhone ? 16 : 18,
               width: '100%',
             }}
           >
-            {loading ? <ActivityIndicator color="#FFFFF8" /> : null}
+            {saving ? <ActivityIndicator color="#FFFFF8" /> : null}
             <Text className="font-poppins-bold text-2xl text-white">
-              {loading ? t('recipeCreate.publishing') : t('recipeCreate.publish')}
+              {saving ? t('editRecipe.saving') : t('editRecipe.save')}
             </Text>
-            {!loading ? <Ionicons name="send-outline" size={25} color="#FFFFF8" /> : null}
+            {!saving ? <Ionicons name="save-outline" size={25} color="#FFFFF8" /> : null}
           </LinearGradient>
         </Pressable>
       </ScrollView>

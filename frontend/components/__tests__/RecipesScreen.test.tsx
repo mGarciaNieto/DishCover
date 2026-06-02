@@ -38,6 +38,14 @@ describe('RecipesScreen', () => {
     expect(router.push).toHaveBeenCalledWith('/recipe/create')
   })
 
+  test('navega a la pantalla de edición de recetas', () => {
+    const { getByText } = render(<RecipesScreen />)
+
+    fireEvent.press(getByText('Editar receta'))
+
+    expect(router.push).toHaveBeenCalledWith('/recipe/edit')
+  })
+
   test('navega a la pantalla de eliminación de recetas', () => {
     const { getByText } = render(<RecipesScreen />)
 

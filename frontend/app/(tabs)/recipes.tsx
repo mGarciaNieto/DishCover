@@ -20,7 +20,7 @@ const managerBackground = {
 
 const actions = [
   { icon: 'add-circle-outline', labelKey: 'recipesManager.create', route: '/recipe/create' },
-  { icon: 'create', labelKey: 'recipesManager.edit', route: null },
+  { icon: 'create', labelKey: 'recipesManager.edit', route: '/recipe/edit' },
   { icon: 'trash', labelKey: 'recipesManager.delete', route: '/recipe/delete' },
 ] as const
 
