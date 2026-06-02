@@ -11,6 +11,14 @@ import HomeScreen from '@/app/(tabs)/index'
 let mockToken: string | null = null
 const mockFetchRecipes = jest.fn()
 
+jest.mock('expo-router', () => ({
+  useFocusEffect(callback: () => void | (() => void)) {
+    const React = jest.requireActual<typeof import('react')>('react')
+
+    React.useEffect(() => callback(), [callback])
+  },
+}))
+
 jest.mock('@/context/AuthContext', () => ({
   useAuth: () => ({
     token: mockToken,

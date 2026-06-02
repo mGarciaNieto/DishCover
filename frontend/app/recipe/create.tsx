@@ -12,13 +12,14 @@ import { useRef, useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { categoryTranslationKeys } from '@/constants/translations'
-import { colors, shadows } from '@/constants/theme'
+import { shadows } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext'
 import { useLanguage } from '@/context/LanguageContext'
+import { useTheme } from '@/context/ThemeContext'
 import { createRecipe } from '@/services/api'
 import { useResponsiveLayout } from '@/hooks/useResponsiveLayout'
 
-const categories = ['Vegano', 'Vegetariano', 'Carne', 'Pescado'] as const
+const categories = ['Vegano', 'Vegetariano', 'Carne', 'Pescado', 'Pasta', 'Pizza', 'Ensalada', 'Postre', 'Bebidas', 'Desayuno', 'Sopa' ] as const
 
 function isValidUrl(value: string) {
   // Validación simple para evitar enviar imágenes con URLs claramente incorrectas.
@@ -43,18 +44,21 @@ function RecipeField({
   keyboardType = 'default',
 }: RecipeFieldProps) {
   const { isShortPhone } = useResponsiveLayout()
+  const { colors } = useTheme()
 
   return (
     <View className="gap-3">
-      <Text className="font-poppins-bold text-dish-muted text-base">{label}</Text>
+      <Text className="font-poppins-bold text-base" style={{ color: colors.mutedText }}>{label}</Text>
       <TextInput
-        className="font-poppins-medium bg-dish-green-light text-dish-green-dark rounded-4xl px-7 text-lg"
+        className="font-poppins-medium rounded-4xl px-7 text-lg"
         keyboardType={keyboardType}
         multiline={multiline}
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor="#FFFFF8"
         style={{
+          backgroundColor: colors.greenLight,
+          color: '#0B3213',
           minHeight: multiline ? (isShortPhone ? 116 : 136) : isShortPhone ? 64 : 72,
           paddingTop: multiline ? (isShortPhone ? 22 : 28) : 0,
           textAlignVertical: multiline ? 'top' : 'center',
@@ -69,6 +73,7 @@ export default function CreateRecipeScreen() {
   const { contentWidthStyle, horizontalPadding, isShortPhone, isSmallPhone, width } = useResponsiveLayout()
   const { token } = useAuth()
   const { t } = useLanguage()
+  const { colors, isDarkMode } = useTheme()
   const ingredientsRef = useRef<TextInput>(null)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -80,6 +85,8 @@ export default function CreateRecipeScreen() {
   const [loading, setLoading] = useState(false)
   const stackCookingTime = width < 380
   const publishButtonHeight = isShortPhone ? 58 : 68
+  const activeCategoryBackground = isDarkMode ? colors.greenLight : colors.greenDark
+  const activeCategoryText = isDarkMode ? '#0B3213' : '#FFFFFF'
 
   const handleCreateRecipe = async () => {
     // El backend espera cookingTime como número entero, no como texto.
@@ -128,7 +135,7 @@ export default function CreateRecipeScreen() {
   }
 
   return (
-    <SafeAreaView className="bg-dish-surface-warm flex-1">
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.surfaceWarm }}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
@@ -151,17 +158,17 @@ export default function CreateRecipeScreen() {
           >
             <Ionicons name="arrow-back" size={28} color={colors.greenDark} />
           </Pressable>
-          <Text className="font-poppins-bold text-dish-green-dark text-xl">{t('recipeCreate.header')}</Text>
+          <Text className="font-poppins-bold text-xl" style={{ color: colors.greenDark }}>{t('recipeCreate.header')}</Text>
         </View>
 
         <View className="gap-4" style={{ paddingTop: isShortPhone ? 20 : 48 }}>
           <Text
-            className={`${isSmallPhone ? 'text-4xl' : 'text-5xl'} font-poppins-bold text-dish-green-dark`}
-            style={{ lineHeight: isSmallPhone ? 44 : 56 }}
+            className={`${isSmallPhone ? 'text-4xl' : 'text-5xl'} font-poppins-bold`}
+            style={{ color: colors.greenDark, lineHeight: isSmallPhone ? 44 : 56 }}
           >
             {t('recipeCreate.title')}
           </Text>
-          <Text className="font-poppins-medium text-dish-muted max-w-80 text-lg" style={{ lineHeight: isSmallPhone ? 25 : 28 }}>
+          <Text className="font-poppins-medium max-w-80 text-lg" style={{ color: colors.mutedText, lineHeight: isSmallPhone ? 25 : 28 }}>
             {t('recipeCreate.subtitle')}
           </Text>
         </View>
@@ -177,23 +184,24 @@ export default function CreateRecipeScreen() {
           />
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.imageLabel')}</Text>
-            <View className="bg-dish-green-light flex-row items-center gap-3 rounded-4xl px-7" style={{ minHeight: isShortPhone ? 64 : 72 }}>
-              <Ionicons name="image-outline" size={22} color="rgba(0, 109, 29, 0.64)" />
+            <Text className="font-poppins-bold text-base" style={{ color: colors.mutedText }}>{t('recipeCreate.imageLabel')}</Text>
+            <View className="flex-row items-center gap-3 rounded-4xl px-7" style={{ backgroundColor: colors.greenLight, minHeight: isShortPhone ? 64 : 72 }}>
+              <Ionicons name="image-outline" size={22} color="#0B3213" />
               <TextInput
                 autoCapitalize="none"
-                className="font-poppins-medium text-dish-green-dark flex-1 text-lg"
+                className="font-poppins-medium flex-1 text-lg"
                 keyboardType="url"
                 onChangeText={setImageUrl}
                 placeholder={t('recipeCreate.imagePlaceholder')}
                 placeholderTextColor="#FFFFF8"
+                style={{ color: '#0B3213' }}
                 value={imageUrl}
               />
             </View>
           </View>
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.categoryLabel')}</Text>
+            <Text className="font-poppins-bold text-base" style={{ color: colors.mutedText }}>{t('recipeCreate.categoryLabel')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
               {categories.map((item) => {
                 const active = item === category
@@ -201,11 +209,16 @@ export default function CreateRecipeScreen() {
                 return (
                   <Pressable
                     key={item}
-                    className={`justify-center rounded-4xl border ${active ? 'border-dish-green-dark bg-dish-green-dark' : 'border-dish-border bg-transparent'}`}
-                    style={{ minHeight: isShortPhone ? 48 : 56, paddingHorizontal: isSmallPhone ? 20 : 28 }}
+                    className="justify-center rounded-4xl border"
+                    style={{
+                      backgroundColor: active ? activeCategoryBackground : colors.surface,
+                      borderColor: active ? activeCategoryBackground : colors.border,
+                      minHeight: isShortPhone ? 48 : 56,
+                      paddingHorizontal: isSmallPhone ? 20 : 28,
+                    }}
                     onPress={() => setCategory(item)}
                   >
-                    <Text className={`font-poppins-bold text-base ${active ? 'text-white' : 'text-dish-text'}`}>
+                    <Text className="font-poppins-bold text-base" style={{ color: active ? activeCategoryText : colors.text }}>
                       {t(categoryTranslationKeys[item])}
                     </Text>
                   </Pressable>
@@ -215,31 +228,31 @@ export default function CreateRecipeScreen() {
           </View>
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.cookingTimeLabel')}</Text>
+            <Text className="font-poppins-bold text-base" style={{ color: colors.mutedText }}>{t('recipeCreate.cookingTimeLabel')}</Text>
             <View className={`${stackCookingTime ? 'gap-4' : 'flex-row gap-5'}`}>
               <TextInput
-                className="font-poppins-medium bg-dish-green-light text-dish-green-dark rounded-4xl px-7 text-lg"
+                className="font-poppins-medium rounded-4xl px-7 text-lg"
                 keyboardType="numeric"
                 onChangeText={setCookingTime}
                 placeholder={t('recipeCreate.minutesPlaceholder')}
                 placeholderTextColor="#FFFFF8"
-                style={{ minHeight: isShortPhone ? 64 : 80, flex: stackCookingTime ? undefined : 1 }}
+                style={{ backgroundColor: colors.greenLight, color: '#0B3213', minHeight: isShortPhone ? 64 : 80, flex: stackCookingTime ? undefined : 1 }}
                 value={cookingTime}
               />
               <View
-                className="items-center justify-center rounded-4xl border-2 border-[#FFD891] bg-[#FFEBC8]"
-                style={{ minHeight: isShortPhone ? 64 : 80, flex: stackCookingTime ? undefined : 1 }}
+                className="items-center justify-center rounded-4xl border-2"
+                style={{ backgroundColor: isDarkMode ? colors.mutedSurface : '#FFEBC8', borderColor: '#FFD891', minHeight: isShortPhone ? 64 : 80, flex: stackCookingTime ? undefined : 1 }}
               >
                 <Ionicons name="timer-outline" size={27} color="#9B5B10" />
-                <Text className="font-poppins-bold text-dish-text mt-1 text-xs uppercase">{t('recipeCreate.durationLabel')}</Text>
+                <Text className="font-poppins-bold mt-1 text-xs uppercase" style={{ color: colors.text }}>{t('recipeCreate.durationLabel')}</Text>
               </View>
             </View>
           </View>
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.servingsLabel')}</Text>
-            <View className="bg-dish-green-light items-center rounded-4xl px-7" style={{ paddingVertical: isShortPhone ? 22 : 32 }}>
-              <Text className={`${isSmallPhone ? 'text-6xl' : 'text-7xl'} font-poppins-bold text-[#063A12]`} style={{ lineHeight: isSmallPhone ? 60 : 72 }}>
+            <Text className="font-poppins-bold text-base" style={{ color: colors.mutedText }}>{t('recipeCreate.servingsLabel')}</Text>
+            <View className="items-center rounded-4xl px-7" style={{ backgroundColor: colors.greenLight, paddingVertical: isShortPhone ? 22 : 32 }}>
+              <Text className={`${isSmallPhone ? 'text-6xl' : 'text-7xl'} font-poppins-bold`} style={{ color: '#063A12', lineHeight: isSmallPhone ? 60 : 72 }}>
                 {servings}
               </Text>
               <View className="mt-3 flex-row gap-5">
@@ -256,27 +269,28 @@ export default function CreateRecipeScreen() {
                   <Ionicons name="add" size={24} color="#FFFFF8" />
                 </Pressable>
               </View>
-              <Text className="font-poppins-bold text-dish-green-dark mt-5 text-xs tracking-wide uppercase">
+              <Text className="font-poppins-bold mt-5 text-xs tracking-wide uppercase" style={{ color: '#063A12' }}>
                 {t('recipeCreate.adjustPeople')}
               </Text>
             </View>
           </View>
 
           <View className="gap-3">
-            <Text className="font-poppins-bold text-dish-muted text-base">{t('recipeCreate.ingredientsLabel')}</Text>
-            <View className="bg-dish-green-light flex-row items-center gap-3 rounded-4xl px-7" style={{ minHeight: isShortPhone ? 64 : 72 }}>
+            <Text className="font-poppins-bold text-base" style={{ color: colors.mutedText }}>{t('recipeCreate.ingredientsLabel')}</Text>
+            <View className="flex-row items-center gap-3 rounded-4xl px-7" style={{ backgroundColor: colors.greenLight, minHeight: isShortPhone ? 64 : 72 }}>
               <TextInput
                 ref={ingredientsRef}
-                className="font-poppins-medium text-dish-green-dark flex-1 text-lg"
+                className="font-poppins-medium flex-1 text-lg"
                 multiline
                 onChangeText={setIngredients}
                 placeholder={t('recipeCreate.ingredientsPlaceholder')}
                 placeholderTextColor="#FFFFF8"
-                style={{ paddingVertical: 18, textAlignVertical: 'center' }}
+                style={{ color: '#0B3213', paddingVertical: 18, textAlignVertical: 'center' }}
                 value={ingredients}
               />
               <Pressable
-                className="bg-dish-green-dark h-12 w-12 items-center justify-center rounded-3xl"
+                className="h-12 w-12 items-center justify-center rounded-3xl"
+                style={{ backgroundColor: '#063A12' }}
                 onPress={() => ingredientsRef.current?.focus()}
               >
                 <Ionicons name="add-circle-outline" size={28} color="#FFFFF8" />

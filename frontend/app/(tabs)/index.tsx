@@ -7,7 +7,8 @@
  */
 import { FlatList, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useFocusEffect } from 'expo-router'
 import { AppScreen } from '@/components/AppScreen'
 import { RecipeCard } from '@/components/RecipeCard'
 import { categoryTranslationKeys } from '@/constants/translations'
@@ -29,7 +30,7 @@ export default function HomeScreen() {
   const visibleRecipes = remoteRecipes ?? recipes
   const visibleCategories = useMemo(() => Array.from(new Set(visibleRecipes.map((recipe) => recipe.category))).filter(Boolean), [visibleRecipes])
 
-  useEffect(() => {
+  const loadRecipes = useCallback(() => {
     if (!token) {
       setRemoteRecipes(null)
       return
@@ -39,6 +40,13 @@ export default function HomeScreen() {
       .then((apiRecipes) => setRemoteRecipes(apiRecipes.length > 0 ? apiRecipes : null))
       .catch(() => setRemoteRecipes(null))
   }, [token])
+
+  useFocusEffect(
+    useCallback(() => {
+      // Las tabs permanecen montadas, así que recargamos recetas cada vez que Inicio recupera el foco.
+      loadRecipes()
+    }, [loadRecipes]),
+  )
 
   useEffect(() => {
     if (activeCategory && !visibleCategories.includes(activeCategory)) {
